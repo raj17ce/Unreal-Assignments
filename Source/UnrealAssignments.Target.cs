@@ -11,5 +11,6 @@ public class UnrealAssignmentsTarget : TargetRules
 		DefaultBuildSettings = BuildSettingsVersion.V2;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_1;
 		ExtraModuleNames.Add("UnrealAssignments");
-	}
+        ExtraModuleNames.Add("Assignment1");
+    }
 }
