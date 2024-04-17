@@ -12,15 +12,29 @@ class ASSIGNMENT1_API AStaircaseActor : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	AStaircaseActor();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	void OnConstruction(const FTransform& Transform);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category="Staircase Properties")
+	int32 NumberOfStaircases;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, category = "Staircase Properties")
+	TArray<UStaticMeshComponent*> StaircaseComponents;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties")
+	FVector Dimensions;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties")
+	UStaticMesh* StairMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties")
+	bool HasRailings;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties", meta = (EditCondition = "HasRailings"))
+	UStaticMesh* RailingMesh;
+
+protected:
+	virtual void BeginPlay() override;
 };

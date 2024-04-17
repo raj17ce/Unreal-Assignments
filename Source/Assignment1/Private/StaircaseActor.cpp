@@ -3,25 +3,48 @@
 
 #include "StaircaseActor.h"
 
-// Sets default values
-AStaircaseActor::AStaircaseActor()
+AStaircaseActor::AStaircaseActor() : NumberOfStaircases{ 10 }, Dimensions{ 2.0, 0.6, 0.34 }, StairMesh{}, HasRailings{false}, RailingMesh{}
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	USceneComponent* RootScene = CreateDefaultSubobject<USceneComponent>("Root Scene");
+	SetRootComponent(RootScene);
 }
 
-// Called when the game starts or when spawned
 void AStaircaseActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
-// Called every frame
 void AStaircaseActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
+void AStaircaseActor::OnConstruction(const FTransform& Transform) {
+	UE_LOG(LogTemp, Warning, TEXT("On Construction Called"));
+
+	for (int32 i = 0; i < StaircaseComponents.Num(); ++i) {
+		if (StaircaseComponents[i]) {
+			StaircaseComponents[i]->DestroyComponent();
+			StaircaseComponents[i] = nullptr;
+		}
+	}
+
+	for (int32 i = 0; i < NumberOfStaircases; ++i) {
+
+		FString ComponentName = "Stair" + FString::FromInt(i);
+		UStaticMeshComponent* Stair = NewObject<UStaticMeshComponent>(this, UStaticMeshComponent::StaticClass(), *ComponentName);
+
+		if (StairMesh) {
+			Stair->SetStaticMesh(StairMesh);
+		}
+
+		Stair->SetRelativeScale3D(Dimensions);
+		Stair->AddLocalOffset(FVector(0, (Dimensions.Y * 125 * i), (Dimensions.Z * 125 * i)));
+		Stair->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+		Stair->RegisterComponentWithWorld(GetWorld());
+
+		StaircaseComponents.Add(Stair);
+	}
+}
