@@ -41,7 +41,7 @@ void AStaircaseActor::OnConstruction(const FTransform& Transform) {
 		}
 
 		Stair->SetRelativeScale3D(Dimensions);
-		Stair->AddLocalOffset(FVector(0, (Dimensions.Y * 125 * i), (Dimensions.Z * 125 * i)));
+		Stair->AddLocalOffset(FVector(0, (Dimensions.Y * 100 * i), (Dimensions.Z * 125 * i)));
 		Stair->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 		Stair->RegisterComponentWithWorld(GetWorld());
 
