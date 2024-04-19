@@ -3,7 +3,7 @@
 
 #include "StaircaseActor.h"
 
-AStaircaseActor::AStaircaseActor() : NumberOfStaircases{ 10 }, Dimensions{ 2.0, 0.6, 0.34 }, StairMesh{}, HasRailings{false}, RailingMesh{}
+AStaircaseActor::AStaircaseActor() : NumberOfStairs{}, StairDimensions{}, StairMesh{}, HasRailings{}, RailingMesh{}, RailingDimensions{}
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -21,30 +21,91 @@ void AStaircaseActor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+//void AStaircaseActor::DestroyStairCase() {
+//	for (int32 i = 0; i < StairComponents.Num(); ++i) {
+//		if (StairComponents[i]) {
+//			StairComponents[i]->DestroyComponent();
+//			StairComponents[i] = nullptr;
+//		}
+//	}
+//}
+
+void AStaircaseActor::CreateStair() {
+	for (int32 i = 0; i < NumberOfStairs; ++i) {
+
+		FString StairComponentName = "Stair" + FString::FromInt(i);
+		FStairComponent StairComponent;
+		StairComponent.Stair = NewObject<UStaticMeshComponent>(this, UStaticMeshComponent::StaticClass(), *StairComponentName);
+
+		FVector StairMeshSize;
+
+		if (StairMesh) {
+			StairComponent.Stair->SetStaticMesh(StairMesh);
+			StairMeshSize = StairMesh->GetBounds().GetBox().GetSize();
+		}
+
+		FVector StairTotalSize{ StairDimensions.X * StairMeshSize.X, StairDimensions.Y * StairMeshSize.Y , StairDimensions.Z * StairMeshSize.Z };
+
+		if (StairCaseType == EStaircaseType::BoxStaircase) {
+			StairComponent.Stair->SetRelativeScale3D(FVector(StairDimensions.X, StairDimensions.Y, StairDimensions.Z * (i + 1)));
+			StairComponent.Stair->SetRelativeLocation(FVector((StairTotalSize.X * (StairTranslationOffset.X / 100) * i), 0, (StairTotalSize.Z * (i + 1) * (StairTranslationOffset.Z / 100))));
+		}
+		else {
+			StairComponent.Stair->SetRelativeScale3D(StairDimensions);
+			StairComponent.Stair->SetRelativeLocation(FVector((StairTotalSize.X * (StairTranslationOffset.X / 100) * i), 0, (StairTotalSize.Z * (StairTranslationOffset.Z / 100) * i)));
+		}
+		StairComponent.Stair->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+		StairComponent.Stair->RegisterComponentWithWorld(GetWorld());
+
+		FVector RailingMeshSize;
+
+		if (HasRailings) {
+			FString LeftRailingName = StairComponentName + " Left Railing";
+			FString RightRailingName = StairComponentName + " Right Railing";
+
+			StairComponent.LeftRailing = NewObject<UStaticMeshComponent>(StairComponent.Stair, UStaticMeshComponent::StaticClass(), *LeftRailingName);
+			StairComponent.RightRailing = NewObject<UStaticMeshComponent>(StairComponent.Stair, UStaticMeshComponent::StaticClass(), *RightRailingName);
+
+			if (RailingMesh) {
+				StairComponent.LeftRailing->SetStaticMesh(RailingMesh);
+				StairComponent.RightRailing->SetStaticMesh(RailingMesh);
+				RailingMeshSize = RailingMesh->GetBounds().GetBox().GetSize();
+			}
+
+			StairComponent.LeftRailing->AttachToComponent(StairComponent.Stair, FAttachmentTransformRules::KeepRelativeTransform);
+			StairComponent.LeftRailing->RegisterComponentWithWorld(GetWorld());
+
+			StairComponent.RightRailing->AttachToComponent(StairComponent.Stair, FAttachmentTransformRules::KeepRelativeTransform);
+			StairComponent.RightRailing->RegisterComponentWithWorld(GetWorld());
+
+			
+
+			if (StairCaseType == EStaircaseType::BoxStaircase) {
+				FVector ParentDimensions = StairComponent.Stair->GetRelativeScale3D();
+				FVector RailingTotalSize{ RailingDimensions.X * RailingMeshSize.X, RailingDimensions.Y * RailingMeshSize.Y, (ParentDimensions.Z + (StairDimensions.Z* (RailingDimensions.Z - 1))) * RailingMeshSize.Z };
+
+				StairComponent.LeftRailing->SetWorldScale3D(FVector(RailingDimensions.X, RailingDimensions.Y, ParentDimensions.Z + (StairDimensions.Z * (RailingDimensions.Z-1))));
+				StairComponent.RightRailing->SetWorldScale3D(FVector(RailingDimensions.X, RailingDimensions.Y, ParentDimensions.Z + (StairDimensions.Z * (RailingDimensions.Z-1))));
+				StairComponent.LeftRailing->SetRelativeLocation(FVector(0, -((((StairTotalSize.Y - RailingTotalSize.Y) / (2 * StairTotalSize.Y)) + (RailingTotalSize.Y / StairTotalSize.Y)) * 100), (((RailingTotalSize.Z - (StairTotalSize.Z * (i+1))) / (2 * StairTotalSize.Z * (i + 1))) * 100)));
+				StairComponent.RightRailing->SetRelativeLocation(FVector(0, ((((StairTotalSize.Y - RailingTotalSize.Y) / (2 * StairTotalSize.Y)) + (RailingTotalSize.Y / StairTotalSize.Y)) * 100), (((RailingTotalSize.Z - (StairTotalSize.Z * (i+1))) / (2 * StairTotalSize.Z * (i + 1))) * 100)));
+			}
+			else {
+				FVector RailingTotalSize{ RailingDimensions.X * StairDimensions.X * RailingMeshSize.X, RailingDimensions.Y * StairDimensions.Y * RailingMeshSize.Y, RailingDimensions.Z * StairDimensions.Z * RailingMeshSize.Z };
+				
+				StairComponent.LeftRailing->SetRelativeScale3D(RailingDimensions);
+				StairComponent.RightRailing->SetRelativeScale3D(RailingDimensions);
+
+				StairComponent.LeftRailing->SetRelativeLocation(FVector(0, -((((StairTotalSize.Y - RailingTotalSize.Y) / (2 * StairTotalSize.Y)) + (RailingTotalSize.Y / StairTotalSize.Y)) * 100), (((RailingTotalSize.Z - StairTotalSize.Z) / (2 * StairTotalSize.Z)) * 100)));
+				StairComponent.RightRailing->SetRelativeLocation(FVector(0, ((((StairTotalSize.Y - RailingTotalSize.Y) / (2 * StairTotalSize.Y)) + (RailingTotalSize.Y / StairTotalSize.Y)) * 100), (((RailingTotalSize.Z - StairTotalSize.Z) / (2 * StairTotalSize.Z)) * 100)));
+			}
+		}
+
+		StairComponents.Add(StairComponent);
+	}
+}
+
 void AStaircaseActor::OnConstruction(const FTransform& Transform) {
 	UE_LOG(LogTemp, Warning, TEXT("On Construction Called"));
 
-	for (int32 i = 0; i < StaircaseComponents.Num(); ++i) {
-		if (StaircaseComponents[i]) {
-			StaircaseComponents[i]->DestroyComponent();
-			StaircaseComponents[i] = nullptr;
-		}
-	}
-
-	for (int32 i = 0; i < NumberOfStaircases; ++i) {
-
-		FString ComponentName = "Stair" + FString::FromInt(i);
-		UStaticMeshComponent* Stair = NewObject<UStaticMeshComponent>(this, UStaticMeshComponent::StaticClass(), *ComponentName);
-
-		if (StairMesh) {
-			Stair->SetStaticMesh(StairMesh);
-		}
-
-		Stair->SetRelativeScale3D(Dimensions);
-		Stair->AddLocalOffset(FVector(0, (Dimensions.Y * 100 * i), (Dimensions.Z * 125 * i)));
-		Stair->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-		Stair->RegisterComponentWithWorld(GetWorld());
-
-		StaircaseComponents.Add(Stair);
-	}
+	CreateStair();
 }

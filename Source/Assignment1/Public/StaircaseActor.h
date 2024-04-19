@@ -6,6 +6,24 @@
 #include "GameFramework/Actor.h"
 #include "StaircaseActor.generated.h"
 
+UENUM()
+enum class EStaircaseType : uint8 {
+	OpenStaircase,
+	CloseStaircase,
+	BoxStaircase
+};
+
+USTRUCT()
+struct FStairComponent {
+
+public:
+	GENERATED_USTRUCT_BODY()
+
+	UStaticMeshComponent* Stair;
+	UStaticMeshComponent* LeftRailing;
+	UStaticMeshComponent* RightRailing;
+};
+
 UCLASS()
 class ASSIGNMENT1_API AStaircaseActor : public AActor
 {
@@ -15,16 +33,24 @@ public:
 	AStaircaseActor();
 
 	virtual void Tick(float DeltaTime) override;
+	//void DestroyStairCase();
+	void CreateStair();
 	void OnConstruction(const FTransform& Transform);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, category="Staircase Properties")
-	int32 NumberOfStaircases;
+	int32 NumberOfStairs;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, category = "Staircase Properties")
-	TArray<UStaticMeshComponent*> StaircaseComponents;
+	UPROPERTY(VisibleDefaultsOnly, category = "Staircase Properties")
+	TArray<FStairComponent> StairComponents;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, category = "Staircase Properties")
+	EStaircaseType StairCaseType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties")
-	FVector Dimensions;
+	FVector StairDimensions;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties")
+	FVector StairTranslationOffset;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties")
 	UStaticMesh* StairMesh;
@@ -34,6 +60,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties", meta = (EditCondition = "HasRailings"))
 	UStaticMesh* RailingMesh;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, category = "Stair Properties", meta = (EditCondition = "HasRailings"))
+	FVector RailingDimensions;
 
 protected:
 	virtual void BeginPlay() override;
