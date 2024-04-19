@@ -15,13 +15,13 @@ enum class EStaircaseType : uint8 {
 
 USTRUCT()
 struct FStairComponent {
-
-public:
-	GENERATED_USTRUCT_BODY()
+	GENERATED_BODY()
 
 	UStaticMeshComponent* Stair;
 	UStaticMeshComponent* LeftRailing;
 	UStaticMeshComponent* RightRailing;
+
+	FStairComponent();
 };
 
 UCLASS()
@@ -33,8 +33,8 @@ public:
 	AStaircaseActor();
 
 	virtual void Tick(float DeltaTime) override;
-	//void DestroyStairCase();
-	void CreateStair();
+	void DestroyStaircase();
+	void CreateStairs();
 	void OnConstruction(const FTransform& Transform);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, category="Staircase Properties")

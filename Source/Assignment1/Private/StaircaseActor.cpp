@@ -21,16 +21,26 @@ void AStaircaseActor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-//void AStaircaseActor::DestroyStairCase() {
-//	for (int32 i = 0; i < StairComponents.Num(); ++i) {
-//		if (StairComponents[i]) {
-//			StairComponents[i]->DestroyComponent();
-//			StairComponents[i] = nullptr;
-//		}
-//	}
-//}
+void AStaircaseActor::DestroyStaircase() {
+	for (int32 i = 0; i < StairComponents.Num(); ++i) {
+		if (StairComponents[i].LeftRailing) {
+			StairComponents[i].LeftRailing->DestroyComponent();
+			StairComponents[i].LeftRailing = nullptr;
+		}
+		if (StairComponents[i].RightRailing) {
+			StairComponents[i].RightRailing->DestroyComponent();
+			StairComponents[i].RightRailing = nullptr;
+		}
+		if (StairComponents[i].Stair) {
+			StairComponents[i].Stair->DestroyComponent();
+			StairComponents[i].Stair = nullptr;
+		}
+	}
 
-void AStaircaseActor::CreateStair() {
+	StairComponents.Empty();
+}
+
+void AStaircaseActor::CreateStairs() {
 	for (int32 i = 0; i < NumberOfStairs; ++i) {
 
 		FString StairComponentName = "Stair" + FString::FromInt(i);
@@ -107,5 +117,9 @@ void AStaircaseActor::CreateStair() {
 void AStaircaseActor::OnConstruction(const FTransform& Transform) {
 	UE_LOG(LogTemp, Warning, TEXT("On Construction Called"));
 
-	CreateStair();
+	DestroyStaircase();
+
+	CreateStairs();
 }
+
+FStairComponent::FStairComponent() : Stair{ nullptr }, LeftRailing{ nullptr }, RightRailing{ nullptr } {}
