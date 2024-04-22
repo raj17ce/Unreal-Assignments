@@ -20,6 +20,8 @@ struct FStairComponent {
 	UStaticMeshComponent* Stair;
 	UStaticMeshComponent* LeftRailing;
 	UStaticMeshComponent* RightRailing;
+	UStaticMeshComponent* LeftRailingLine;
+	UStaticMeshComponent* RightRailingLine;
 
 	FStairComponent();
 };
@@ -61,8 +63,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties", meta = (EditCondition = "HasRailings"))
 	UStaticMesh* RailingMesh;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, category = "Stair Properties", meta = (EditCondition = "HasRailings"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties", meta = (EditCondition = "HasRailings"))
 	FVector RailingDimensions;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties", meta = (EditCondition = "HasRailings"))
+	UStaticMesh* RailingLineMesh;
 
 protected:
 	virtual void BeginPlay() override;

@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
+#include <math.h>
 #include "StaircaseActor.h"
 
 AStaircaseActor::AStaircaseActor() : NumberOfStairs{}, StairDimensions{}, StairMesh{}, HasRailings{}, RailingMesh{}, RailingDimensions{}
@@ -22,7 +22,16 @@ void AStaircaseActor::Tick(float DeltaTime)
 }
 
 void AStaircaseActor::DestroyStaircase() {
+
 	for (int32 i = 0; i < StairComponents.Num(); ++i) {
+		if (StairComponents[i].LeftRailingLine) {
+			StairComponents[i].LeftRailingLine->DestroyComponent();
+			StairComponents[i].LeftRailingLine = nullptr;
+		}
+		if (StairComponents[i].RightRailingLine) {
+			StairComponents[i].RightRailingLine->DestroyComponent();
+			StairComponents[i].RightRailingLine = nullptr;
+		}
 		if (StairComponents[i].LeftRailing) {
 			StairComponents[i].LeftRailing->DestroyComponent();
 			StairComponents[i].LeftRailing = nullptr;
@@ -68,6 +77,7 @@ void AStaircaseActor::CreateStairs() {
 		StairComponent.Stair->RegisterComponentWithWorld(GetWorld());
 
 		FVector RailingMeshSize;
+		FVector RailingLineMeshSize;
 
 		if (HasRailings) {
 			FString LeftRailingName = StairComponentName + " Left Railing";
@@ -88,26 +98,68 @@ void AStaircaseActor::CreateStairs() {
 			StairComponent.RightRailing->AttachToComponent(StairComponent.Stair, FAttachmentTransformRules::KeepRelativeTransform);
 			StairComponent.RightRailing->RegisterComponentWithWorld(GetWorld());
 
+			FVector RailingTotalSize{ RailingDimensions.X * StairDimensions.X * RailingMeshSize.X, RailingDimensions.Y * StairDimensions.Y * RailingMeshSize.Y, RailingDimensions.Z * StairDimensions.Z * RailingMeshSize.Z };
 			
-
 			if (StairCaseType == EStaircaseType::BoxStaircase) {
 				FVector ParentDimensions = StairComponent.Stair->GetRelativeScale3D();
-				FVector RailingTotalSize{ RailingDimensions.X * RailingMeshSize.X, RailingDimensions.Y * RailingMeshSize.Y, (ParentDimensions.Z + (StairDimensions.Z* (RailingDimensions.Z - 1))) * RailingMeshSize.Z };
+				RailingTotalSize = FVector(RailingDimensions.X * RailingMeshSize.X, RailingDimensions.Y * RailingMeshSize.Y, RailingDimensions.Z * RailingMeshSize.Z);
 
-				StairComponent.LeftRailing->SetWorldScale3D(FVector(RailingDimensions.X, RailingDimensions.Y, ParentDimensions.Z + (StairDimensions.Z * (RailingDimensions.Z-1))));
-				StairComponent.RightRailing->SetWorldScale3D(FVector(RailingDimensions.X, RailingDimensions.Y, ParentDimensions.Z + (StairDimensions.Z * (RailingDimensions.Z-1))));
-				StairComponent.LeftRailing->SetRelativeLocation(FVector(0, -((((StairTotalSize.Y - RailingTotalSize.Y) / (2 * StairTotalSize.Y)) + (RailingTotalSize.Y / StairTotalSize.Y)) * 100), (((RailingTotalSize.Z - (StairTotalSize.Z * (i+1))) / (2 * StairTotalSize.Z * (i + 1))) * 100)));
-				StairComponent.RightRailing->SetRelativeLocation(FVector(0, ((((StairTotalSize.Y - RailingTotalSize.Y) / (2 * StairTotalSize.Y)) + (RailingTotalSize.Y / StairTotalSize.Y)) * 100), (((RailingTotalSize.Z - (StairTotalSize.Z * (i+1))) / (2 * StairTotalSize.Z * (i + 1))) * 100)));
+				StairComponent.LeftRailing->SetWorldScale3D(RailingDimensions);
+				StairComponent.RightRailing->SetWorldScale3D(RailingDimensions);
+				StairComponent.LeftRailing->SetRelativeLocation(FVector(0, -((((StairTotalSize.Y / 2) - (RailingTotalSize.Y * 2)) / StairTotalSize.Y) * 100), ((((RailingTotalSize.Z / 2) + ((StairTotalSize.Z * (i+1)) / 2)) / (StairTotalSize.Z * (i+1))) * 100)));
+				StairComponent.RightRailing->SetRelativeLocation(FVector(0, ((((StairTotalSize.Y / 2) - (RailingTotalSize.Y * 2)) / StairTotalSize.Y) * 100), ((((RailingTotalSize.Z / 2) + ((StairTotalSize.Z * (i+1)) / 2)) / (StairTotalSize.Z * (i+1))) * 100)));
 			}
 			else {
-				FVector RailingTotalSize{ RailingDimensions.X * StairDimensions.X * RailingMeshSize.X, RailingDimensions.Y * StairDimensions.Y * RailingMeshSize.Y, RailingDimensions.Z * StairDimensions.Z * RailingMeshSize.Z };
-				
 				StairComponent.LeftRailing->SetRelativeScale3D(RailingDimensions);
 				StairComponent.RightRailing->SetRelativeScale3D(RailingDimensions);
 
-				StairComponent.LeftRailing->SetRelativeLocation(FVector(0, -((((StairTotalSize.Y - RailingTotalSize.Y) / (2 * StairTotalSize.Y)) + (RailingTotalSize.Y / StairTotalSize.Y)) * 100), (((RailingTotalSize.Z - StairTotalSize.Z) / (2 * StairTotalSize.Z)) * 100)));
-				StairComponent.RightRailing->SetRelativeLocation(FVector(0, ((((StairTotalSize.Y - RailingTotalSize.Y) / (2 * StairTotalSize.Y)) + (RailingTotalSize.Y / StairTotalSize.Y)) * 100), (((RailingTotalSize.Z - StairTotalSize.Z) / (2 * StairTotalSize.Z)) * 100)));
+				StairComponent.LeftRailing->SetRelativeLocation(FVector(0, -((((StairTotalSize.Y / 2) - (RailingTotalSize.Y * 2)) / StairTotalSize.Y) * 100), ((((RailingTotalSize.Z / 2) + (StairTotalSize.Z / 2)) / StairTotalSize.Z) * 100)));
+				StairComponent.RightRailing->SetRelativeLocation(FVector(0, ((((StairTotalSize.Y / 2) - (RailingTotalSize.Y * 2)) / StairTotalSize.Y) * 100), ((((RailingTotalSize.Z / 2) + (StairTotalSize.Z / 2)) / StairTotalSize.Z) * 100)));
 			}
+
+			FString LeftRailingLineName = StairComponentName + " Left Railing Line";
+			FString RightRailingLineName = StairComponentName + " Right Railing Line";
+
+			StairComponent.LeftRailingLine = NewObject<UStaticMeshComponent>(StairComponent.LeftRailing, UStaticMeshComponent::StaticClass(), *LeftRailingLineName);
+			StairComponent.RightRailingLine = NewObject<UStaticMeshComponent>(StairComponent.RightRailing, UStaticMeshComponent::StaticClass(), *RightRailingLineName);
+
+			if (RailingLineMesh) {
+				StairComponent.LeftRailingLine->SetStaticMesh(RailingLineMesh);
+				StairComponent.RightRailingLine->SetStaticMesh(RailingLineMesh);
+				RailingLineMeshSize = RailingLineMesh->GetBounds().GetBox().GetSize();
+			}
+
+			StairComponent.LeftRailingLine->AttachToComponent(StairComponent.LeftRailing, FAttachmentTransformRules::KeepRelativeTransform);
+			StairComponent.LeftRailingLine->RegisterComponentWithWorld(GetWorld());
+
+			StairComponent.RightRailingLine->AttachToComponent(StairComponent.RightRailing, FAttachmentTransformRules::KeepRelativeTransform);
+			StairComponent.RightRailingLine->RegisterComponentWithWorld(GetWorld());
+
+			StairComponent.LeftRailingLine->SetRelativeLocation(FVector(0, 0, 50));
+			StairComponent.RightRailingLine->SetRelativeLocation(FVector(0, 0, 50));
+
+			double LengthX{ 0 };
+			double LengthZ{ 0 };
+
+			if (StairCaseType == EStaircaseType::BoxStaircase) {
+				StairComponent.LeftRailingLine->SetWorldScale3D(FVector((StairDimensions.X * (StairTranslationOffset.X / 100) * 1.2), (RailingDimensions.Y * 3), (StairDimensions.Z * 0.2)));
+				StairComponent.RightRailingLine->SetWorldScale3D(FVector((StairDimensions.X * (StairTranslationOffset.X / 100) * 1.2), (RailingDimensions.Y * 3), (StairDimensions.Z * 0.2)));
+
+				LengthX = StairDimensions.X;
+				LengthZ = StairDimensions.Z;
+			}
+			else {
+				StairComponent.LeftRailingLine->SetWorldScale3D(FVector((StairDimensions.X * (StairTranslationOffset.X / 100) * 1.2), (StairDimensions.Y * RailingDimensions.Y * 3), (StairDimensions.Z * 0.2)));
+				StairComponent.RightRailingLine->SetWorldScale3D(FVector((StairDimensions.X * (StairTranslationOffset.X / 100) * 1.2), (StairDimensions.Y * RailingDimensions.Y * 3), (StairDimensions.Z * 0.2)));
+
+				LengthX = StairDimensions.X + (((StairTranslationOffset.X / 100) - 1) * StairDimensions.X);
+				LengthZ = StairDimensions.Z + (((StairTranslationOffset.Z / 100) - 1) * StairDimensions.Z);
+			}
+
+			double RailingLinePitch = atan(LengthZ / LengthX) * 180 / PI;
+
+			StairComponent.LeftRailingLine->SetRelativeRotation(FRotator(RailingLinePitch, 0, 0));
+			StairComponent.RightRailingLine->SetRelativeRotation(FRotator(RailingLinePitch, 0, 0));
 		}
 
 		StairComponents.Add(StairComponent);
@@ -122,4 +174,4 @@ void AStaircaseActor::OnConstruction(const FTransform& Transform) {
 	CreateStairs();
 }
 
-FStairComponent::FStairComponent() : Stair{ nullptr }, LeftRailing{ nullptr }, RightRailing{ nullptr } {}
+FStairComponent::FStairComponent() : Stair{ nullptr }, LeftRailing{ nullptr }, RightRailing{ nullptr }, LeftRailingLine{ nullptr }, RightRailingLine{ nullptr } {}
