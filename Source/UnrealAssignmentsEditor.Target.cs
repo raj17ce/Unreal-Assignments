@@ -12,5 +12,6 @@ public class UnrealAssignmentsEditorTarget : TargetRules
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_1;
 		ExtraModuleNames.Add("UnrealAssignments");
         ExtraModuleNames.Add("Assignment1");
+		ExtraModuleNames.Add("Assignment2");
     }
 }
