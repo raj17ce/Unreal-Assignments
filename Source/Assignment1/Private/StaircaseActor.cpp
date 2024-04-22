@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include <math.h>
 #include "StaircaseActor.h"
+#include <math.h>
 
 AStaircaseActor::AStaircaseActor() : NumberOfStairs{}, StairDimensions{}, StairMesh{}, HasRailings{}, RailingMesh{}, RailingDimensions{}
 {
@@ -61,6 +61,10 @@ void AStaircaseActor::CreateStairs() {
 		if (StairMesh) {
 			StairComponent.Stair->SetStaticMesh(StairMesh);
 			StairMeshSize = StairMesh->GetBounds().GetBox().GetSize();
+
+			if (StairMeshMaterial) {
+				StairComponent.Stair->SetMaterial(0, StairMeshMaterial);
+			}
 		}
 
 		FVector StairTotalSize{ StairDimensions.X * StairMeshSize.X, StairDimensions.Y * StairMeshSize.Y , StairDimensions.Z * StairMeshSize.Z };
@@ -90,6 +94,11 @@ void AStaircaseActor::CreateStairs() {
 				StairComponent.LeftRailing->SetStaticMesh(RailingMesh);
 				StairComponent.RightRailing->SetStaticMesh(RailingMesh);
 				RailingMeshSize = RailingMesh->GetBounds().GetBox().GetSize();
+
+				if (RailingMeshMaterial) {
+					StairComponent.LeftRailing->SetMaterial(0, RailingMeshMaterial);
+					StairComponent.RightRailing->SetMaterial(0, RailingMeshMaterial);
+				}
 			}
 
 			StairComponent.LeftRailing->AttachToComponent(StairComponent.Stair, FAttachmentTransformRules::KeepRelativeTransform);
@@ -127,6 +136,11 @@ void AStaircaseActor::CreateStairs() {
 				StairComponent.LeftRailingLine->SetStaticMesh(RailingLineMesh);
 				StairComponent.RightRailingLine->SetStaticMesh(RailingLineMesh);
 				RailingLineMeshSize = RailingLineMesh->GetBounds().GetBox().GetSize();
+
+				if (RailingLineMeshMaterial) {
+					StairComponent.LeftRailingLine->SetMaterial(0, RailingLineMeshMaterial);
+					StairComponent.RightRailingLine->SetMaterial(0, RailingLineMeshMaterial);
+				}
 			}
 
 			StairComponent.LeftRailingLine->AttachToComponent(StairComponent.LeftRailing, FAttachmentTransformRules::KeepRelativeTransform);
@@ -157,6 +171,15 @@ void AStaircaseActor::CreateStairs() {
 			}
 
 			double RailingLinePitch = atan(LengthZ / LengthX) * 180 / PI;
+
+			if (StairCaseType == EStaircaseType::BoxStaircase) {
+				StairComponent.LeftRailingLine->SetWorldScale3D(FVector((LengthX / (cos(RailingLinePitch * PI / 180))), (RailingDimensions.Y * 3), (StairDimensions.Z * 0.2)));
+				StairComponent.RightRailingLine->SetWorldScale3D(FVector((LengthX / (cos(RailingLinePitch * PI / 180))), (RailingDimensions.Y * 3), (StairDimensions.Z * 0.2)));
+			}
+			else {
+				StairComponent.LeftRailingLine->SetWorldScale3D(FVector((LengthX / (cos(RailingLinePitch * PI / 180))), (StairDimensions.Y * RailingDimensions.Y * 3), (StairDimensions.Z * 0.2)));
+				StairComponent.RightRailingLine->SetWorldScale3D(FVector((LengthX / (cos(RailingLinePitch * PI / 180))), (StairDimensions.Y * RailingDimensions.Y * 3), (StairDimensions.Z * 0.2)));
+			}
 
 			StairComponent.LeftRailingLine->SetRelativeRotation(FRotator(RailingLinePitch, 0, 0));
 			StairComponent.RightRailingLine->SetRelativeRotation(FRotator(RailingLinePitch, 0, 0));

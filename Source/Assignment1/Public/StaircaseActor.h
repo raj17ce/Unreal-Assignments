@@ -58,16 +58,25 @@ public:
 	UStaticMesh* StairMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties")
+	UMaterial* StairMeshMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties")
 	bool HasRailings;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties", meta = (EditCondition = "HasRailings"))
 	UStaticMesh* RailingMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties")
+	UMaterial* RailingMeshMaterial;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties", meta = (EditCondition = "HasRailings"))
 	FVector RailingDimensions;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties", meta = (EditCondition = "HasRailings"))
 	UStaticMesh* RailingLineMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties")
+	UMaterial* RailingLineMeshMaterial;
 
 protected:
 	virtual void BeginPlay() override;
