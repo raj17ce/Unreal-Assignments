@@ -39,7 +39,7 @@ public:
 	void CreateStairs();
 	void OnConstruction(const FTransform& Transform);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, category="Staircase Properties")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category="Staircase Properties", meta=(ClampMin = "0"))
 	int32 NumberOfStairs;
 
 	UPROPERTY(VisibleDefaultsOnly, category = "Staircase Properties")
@@ -48,10 +48,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, category = "Staircase Properties")
 	EStaircaseType StairCaseType;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties", meta = (ClampMin = "0.01", UIMin = "0.01"))
 	FVector StairDimensions;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties", meta = (ClampMin = "100", UIMin = "100", EditCondition = "StairCaseType==EStaircaseType::OpenStaircase"))
 	FVector StairTranslationOffset;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties")
@@ -66,16 +66,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties", meta = (EditCondition = "HasRailings"))
 	UStaticMesh* RailingMesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties", meta = (EditCondition = "HasRailings"))
 	UMaterial* RailingMeshMaterial;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties", meta = (EditCondition = "HasRailings"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties", meta = (EditCondition = "HasRailings", ClampMin = "0.01", UIMin = "0.01"))
 	FVector RailingDimensions;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties", meta = (EditCondition = "HasRailings"))
 	UStaticMesh* RailingLineMesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties", meta = (EditCondition = "HasRailings"))
 	UMaterial* RailingLineMeshMaterial;
 
 protected:
