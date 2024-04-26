@@ -5,11 +5,12 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "BaseCharacter.h"
 #include "TP_ThirdPersonCharacter.generated.h"
 
 
 UCLASS(config=Game)
-class ATP_ThirdPersonCharacter : public ACharacter
+class ATP_ThirdPersonCharacter : public ABaseCharacter
 {
 	GENERATED_BODY()
 

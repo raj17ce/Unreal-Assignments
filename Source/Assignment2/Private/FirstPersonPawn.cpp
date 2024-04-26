@@ -22,6 +22,7 @@ AFirstPersonPawn::AFirstPersonPawn() : PawnMappingContext{ nullptr }, MoveAction
 	CameraComponent->SetupAttachment(CapsuleComponent);
 
 	FloatingPawnMovement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Floating Pawn Movement"));
+	PawnAttributeAsset = LoadObject<UPawnAttributeAsset>(this, TEXT("/Script/Assignment2.PawnAttributeAsset'/Game/Assignment2/Data/BP_FPPAsset.BP_FPPAsset'"));
 }
 
 // Called when the game starts or when spawned
@@ -32,7 +33,6 @@ void AFirstPersonPawn::BeginPlay() {
 // Called every frame
 void AFirstPersonPawn::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input

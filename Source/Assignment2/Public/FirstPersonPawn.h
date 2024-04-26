@@ -12,6 +12,7 @@
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "PawnAttributeAsset.h"
 #include "FirstPersonPawn.generated.h"
 
 UCLASS()
@@ -25,6 +26,8 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	UPawnAttributeAsset* PawnAttributeAsset;
+
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

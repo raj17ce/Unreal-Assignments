@@ -13,12 +13,13 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
+#include "BaseCharacter.h"
 #include "TP_TopDownCharacter.generated.h"
 
 class UNiagaraSystem;
 
 UCLASS(Blueprintable)
-class ATP_TopDownCharacter : public ACharacter
+class ATP_TopDownCharacter : public ABaseCharacter
 {
 	GENERATED_BODY()
 

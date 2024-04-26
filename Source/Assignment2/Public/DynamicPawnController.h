@@ -9,6 +9,7 @@
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "PawnAttributeAsset.h"
 #include "DynamicPawnController.generated.h"
 
 
@@ -42,6 +43,9 @@ public:
 
 	virtual void SetupInputComponent() override;
 	virtual void BeginPlay() override;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void DisplayAttributes(UPawnAttributeAsset* PawnAttributes);
 
 	void SpawnPawn();
 

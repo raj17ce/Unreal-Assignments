@@ -2,6 +2,8 @@
 
 
 #include "DynamicPawnController.h"
+#include "FirstPersonPawn.h"
+#include "BaseCharacter.h"
 
 ADynamicPawnController::ADynamicPawnController() : CurrentPawn{ nullptr }, CurrentPawnIndex{0} {
 
@@ -66,16 +68,21 @@ void ADynamicPawnController::SpawnPawn() {
 
 			if(SpawnedPawn) {
 				Possess(SpawnedPawn);
-		
 				CurrentPawn = SpawnedPawn;
 				CurrentPawnType = CurrentRow->PawnType;
 				CurrentPawnIndex = (CurrentPawnIndex + 1) % PawnNames.Num();
 
 				if (CurrentPawnType == EPawnType::TopDownPawn) {
 					SetShowMouseCursor(true);
+					DisplayAttributes(Cast<ABaseCharacter>(SpawnedPawn)->PawnAttributeAsset);
+				}
+				else if(CurrentPawnType == EPawnType::FirstPersonPawn) {
+					SetShowMouseCursor(false);
+					DisplayAttributes(Cast<AFirstPersonPawn>(SpawnedPawn)->PawnAttributeAsset);
 				}
 				else {
 					SetShowMouseCursor(false);
+					DisplayAttributes(Cast<ABaseCharacter>(SpawnedPawn)->PawnAttributeAsset);
 				}
 			}
 		}

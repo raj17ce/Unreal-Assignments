@@ -8,10 +8,11 @@ public class UnrealAssignments : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "HeadMountedDisplay", "NavigationSystem", "AIModule", "Niagara" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "HeadMountedDisplay", "NavigationSystem", "AIModule", "Niagara", "Assignment2" });
 
         PublicIncludePaths.AddRange(new string[] {
-            "C:/Program Files/UE_5.2/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public"
+            "C:/Program Files/UE_5.2/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public",
+            "D:/Work/Unreal Training/UnrealAssignments/Source/Assignment2/Public"
         });
 
         PrivateDependencyModuleNames.AddRange(new string[] {  });
