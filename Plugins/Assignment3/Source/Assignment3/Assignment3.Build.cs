@@ -10,6 +10,7 @@ public class Assignment3 : ModuleRules
 		
 		PublicIncludePaths.AddRange(
 			new string[] {
+                "C:/Program Files/UE_5.2/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public"
 				// ... add public include paths required here ...
 			}
 			);
@@ -26,6 +27,8 @@ public class Assignment3 : ModuleRules
 			new string[]
 			{
 				"Core",
+				"EnhancedInput",
+				"InputCore"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
