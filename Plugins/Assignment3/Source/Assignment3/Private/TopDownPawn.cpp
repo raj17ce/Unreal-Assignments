@@ -25,7 +25,6 @@ ATopDownPawn::ATopDownPawn() : MappingContext{nullptr}, MoveAction{nullptr}, Zoo
 	Camera->SetupAttachment(SpringArm, SpringArm->SocketName);
 
 	FloatingPawnMovement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Floating Pawn Movement"));
-
 }
 
 // Called when the game starts or when spawned
@@ -109,11 +108,11 @@ void ATopDownPawn::Zoom(const FInputActionValue& ActionValue) {
 
 	float CurrentArmLength = SpringArm->TargetArmLength;
 	float CurrentYZLength = abs(MouseWheelInput * 25);
-	float NewPitch = (asin(CurrentYZLength / CurrentArmLength) * 180 / PI);
+	float NewPitch = (atan(CurrentYZLength / CurrentArmLength) * 180 / PI); 
 
 	UE_LOG(LogTemp, Warning, TEXT("CurrentArmLength : %f"), CurrentArmLength)
 
-	if (SpringArm->TargetArmLength > 400.0) {
+	if (SpringArm->TargetArmLength > 400.0f) {
 		SpringArm->TargetArmLength += (MouseWheelInput * 50);
 		//UE_LOG(LogTemp, Warning, TEXT("TargetArmLength1 : %f"), SpringArm->TargetArmLength)
 	}
