@@ -33,21 +33,19 @@ void AWallSpline::Tick(float DeltaTime)
 }
 
 void AWallSpline::OnConstruction(const FTransform& Transform) {
-	DestroySplineMeshes();
-	GenerateSplineMeshes();
+	
 }
 
 void AWallSpline::GenerateSplineMeshes() {
-	int32 SplinePointsCount = SplineComponent->GetNumberOfSplinePoints();
 
-	for (int32 i = 0; i < SplinePointsCount-1; i++) {
-		SetSplinePointZeroTangents(i);
+	int32 SplinePointIndex = SplineComponent->GetNumberOfSplinePoints() - 2;
 
-		FVector StartLocation = SplineComponent->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::World);
-		FVector EndLocation = SplineComponent->GetLocationAtSplinePoint(i + 1, ESplineCoordinateSpace::World);
+	SetSplinePointZeroTangents(SplinePointIndex);
 
-		CreateSplineMeshComponent(StartLocation, EndLocation);
-	}
+	FVector StartLocation = SplineComponent->GetLocationAtSplinePoint(SplinePointIndex, ESplineCoordinateSpace::World);
+	FVector EndLocation = SplineComponent->GetLocationAtSplinePoint(SplinePointIndex + 1, ESplineCoordinateSpace::World);
+
+	CreateSplineMeshComponent(StartLocation, EndLocation);
 }
 
 void AWallSpline::SetSplinePointZeroTangents(int32 index) {
@@ -80,6 +78,11 @@ void AWallSpline::CreateSplineMeshComponent(FVector& StartLocation, FVector& End
 	SplineMeshComponents.Add(SplineMeshComponent);
 }
 
+void AWallSpline::AddNewSplinePoint(FVector& Location) {
+	SplineComponent->AddSplinePoint(Location, ESplineCoordinateSpace::World);
+	GenerateSplineMeshes();
+}
+
 void AWallSpline::DestroySplineMeshes() {
 	for (int32 i = 0; i < SplineMeshComponents.Num(); ++i) {
 		if (SplineMeshComponents[i]) {
@@ -88,5 +91,29 @@ void AWallSpline::DestroySplineMeshes() {
 		}
 	}
 
-	SplineMeshComponents.Empty();
+	if (!SplineMeshComponents.IsEmpty()) {
+		SplineMeshComponents.Empty();
+	}
+}
+
+bool AWallSpline::RemoveLastSplinePoint() {
+	int32 LastIndex = SplineMeshComponents.Num() - 1;
+	bool IsSplineDeleted{ false };
+	
+	if (LastIndex > 0) {
+		SplineComponent->RemoveSplinePoint(LastIndex+1);
+
+		if (SplineMeshComponents[LastIndex]) {
+			SplineMeshComponents[LastIndex]->DestroyComponent();
+			SplineMeshComponents[LastIndex] = nullptr;
+		}
+
+		SplineMeshComponents.RemoveAt(LastIndex);
+
+		if (LastIndex == 1) {
+			SplineComponent->ClearSplinePoints();
+			IsSplineDeleted = true;
+		}
+	}
+	return IsSplineDeleted;
 }

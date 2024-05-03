@@ -46,5 +46,7 @@ public:
 
 	void SetSplinePointZeroTangents(int32 index);
 	void CreateSplineMeshComponent(FVector& StartLocation, FVector& EndLocation);
+	void AddNewSplinePoint(FVector& Location);
 	void DestroySplineMeshes();
+	bool RemoveLastSplinePoint();
 };
