@@ -17,8 +17,6 @@ ATopDownPawn::ATopDownPawn() : MappingContext{nullptr}, MoveAction{nullptr}, Zoo
 	SetRootComponent(CapsuleComponent);
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm Component"));
-	SpringArm->TargetArmLength = 700;
-	SpringArm->SetRelativeRotation(FRotator(-50,0,0));
 	SpringArm->SetupAttachment(CapsuleComponent);
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera Component"));
@@ -106,39 +104,61 @@ void ATopDownPawn::Zoom(const FInputActionValue& ActionValue) {
 
 	MouseWheelInput = FMath::Clamp(MouseWheelInput, -1.0, 1.0);
 
-	float CurrentArmLength = SpringArm->TargetArmLength;
-	float CurrentYZLength = abs(MouseWheelInput * 25);
-	float NewPitch = (atan(CurrentYZLength / CurrentArmLength) * 180 / PI); 
+	float TempArmLength = SpringArm->TargetArmLength;
+	float TempOffset = SpringArm->TargetOffset.Z;
 
-	UE_LOG(LogTemp, Warning, TEXT("CurrentArmLength : %f"), CurrentArmLength)
+	float CameraPitch = FMath::RadiansToDegrees(atan(TempOffset / TempArmLength));
 
-	if (SpringArm->TargetArmLength > 400.0f) {
-		SpringArm->TargetArmLength += (MouseWheelInput * 50);
-		//UE_LOG(LogTemp, Warning, TEXT("TargetArmLength1 : %f"), SpringArm->TargetArmLength)
-	}
-	else if(SpringArm->TargetOffset.Z > -300.0) {
+	if (SpringArm->TargetOffset.Z > 0) {
+		if (SpringArm->TargetOffset.Z < 5000) {
+			TempOffset += (MouseWheelInput * OffsetScaleFactor);
+			TempOffset = FMath::Clamp(TempOffset, 0, 5000);
+			SpringArm->TargetOffset.Z = TempOffset;
+			CameraPitch = FMath::RadiansToDegrees(atan(TempOffset / TempArmLength));
+			Camera->SetRelativeRotation(FRotator{-1.0f * CameraPitch, 0, 0 });
 
-		UE_LOG(LogTemp, Warning, TEXT("NewPitch : %f"), NewPitch)
-
-		if (SpringArm->TargetOffset.Z == 0.0) {
-			if (MouseWheelInput < 0.0) {
-				SpringArm->TargetOffset.Z += (MouseWheelInput * 25);
-				Camera->AddRelativeRotation(FRotator(NewPitch, 0, 0));
+			if (SpringArm->TargetOffset.Z < 1100 && SpringArm->TargetArmLength >= 450 && SpringArm->TargetArmLength <= 600) {
+				TempArmLength += (MouseWheelInput * ArmLengthScaleFactor);
+				TempArmLength = FMath::Clamp(TempArmLength, 450, 600);
+				SpringArm->TargetArmLength = TempArmLength;
 			}
-			else {
-				SpringArm->TargetArmLength += (MouseWheelInput * 50);
+
+			if (SpringArm->TargetOffset.Z > 1100 && SpringArm->TargetOffset.Z < 2350 && SpringArm->TargetArmLength >= 600 && SpringArm->TargetArmLength <= 1200) {
+				TempArmLength += (MouseWheelInput * ArmLengthScaleFactor);
+				TempArmLength = FMath::Clamp(TempArmLength, 600, 1200);
+				SpringArm->TargetArmLength = TempArmLength;
 			}
 		}
-		else if (SpringArm->TargetOffset.Z < 0.0) {
-			SpringArm->TargetOffset.Z += (MouseWheelInput * 25);
-			Camera->AddRelativeRotation(FRotator(MouseWheelInput * -1.0f * NewPitch, 0, 0));
+		else if(MouseWheelInput < 1.0) {
+			TempOffset += (MouseWheelInput * OffsetScaleFactor);
+			TempOffset = FMath::Clamp(TempOffset, 0, 5000);
+			SpringArm->TargetOffset.Z = TempOffset;
+			CameraPitch = FMath::RadiansToDegrees(atan(TempOffset / TempArmLength));
+			Camera->SetRelativeRotation(FRotator{ -1.0f * CameraPitch, 0, 0 });
 		}
+	}
+	else if (SpringArm->TargetArmLength > 250 && SpringArm->TargetArmLength < 500) {
+		TempArmLength += (MouseWheelInput * ArmLengthScaleFactor);
+		TempArmLength = FMath::Clamp(TempArmLength, 250, 500);
+		SpringArm->TargetArmLength = TempArmLength;
+	}
+	else if (SpringArm->TargetArmLength >= 500) {
+		if (MouseWheelInput > 0) {
+			TempOffset += (MouseWheelInput * OffsetScaleFactor);
+			SpringArm->TargetOffset.Z = TempOffset;
+			CameraPitch = FMath::RadiansToDegrees(atan(TempOffset / TempArmLength));
+			Camera->SetRelativeRotation(FRotator{-1.0f * CameraPitch, 0, 0 });
+		}
+		else {
+			SpringArm->TargetArmLength += (MouseWheelInput * ArmLengthScaleFactor);
+		}
+	}
+	else if (SpringArm->TargetArmLength <= 250) {
+		if (MouseWheelInput > 0) {
+			SpringArm->TargetArmLength += (MouseWheelInput * ArmLengthScaleFactor);
+		}
+	}
 
-		UE_LOG(LogTemp, Warning, TEXT("SpringArm->TargetOffset.Z : %f"), SpringArm->TargetOffset.Z)
-		UE_LOG(LogTemp, Warning, TEXT("Camera Pitch : %f"), Camera->GetRelativeRotation().Pitch)
-	}
-	else if (SpringArm->TargetOffset.Z == -300.0 && MouseWheelInput > 0.0) {
-		SpringArm->TargetOffset.Z += (MouseWheelInput * 25);
-		Camera->AddRelativeRotation(FRotator(-1.0f * NewPitch, 0, 0));
-	}
+	UE_LOG(LogTemp, Warning, TEXT("CurrentArmLength : %f"), SpringArm->TargetArmLength)
+	UE_LOG(LogTemp, Warning, TEXT("CurrentOffset : %f"), SpringArm->TargetOffset.Z)
 }
