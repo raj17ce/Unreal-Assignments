@@ -44,10 +44,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UCameraComponent* Camera;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	float OffsetScaleFactor;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	float ArmLengthScaleFactor;
 
 	UInputMappingContext* MappingContext;

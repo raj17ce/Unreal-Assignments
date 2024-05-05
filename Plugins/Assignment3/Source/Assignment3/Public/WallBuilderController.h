@@ -11,6 +11,8 @@
 #include "GameFramework/PlayerController.h"
 #include "WallBuilderController.generated.h"
 
+DECLARE_DELEGATE_OneParam(FMessageDelegate, const FString&)
+
 /**
  * 
  */
@@ -41,4 +43,9 @@ public:
 	void HandleKeyboardInputX();
 	void HandleKeyboardInputZ();
 	void HandleKeyboardInputDelete();
+
+	FMessageDelegate MessageDelegate;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void DisplayMessage(const FString& Message);
 };

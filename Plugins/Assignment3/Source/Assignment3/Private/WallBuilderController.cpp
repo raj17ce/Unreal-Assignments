@@ -6,6 +6,9 @@
 AWallBuilderController::AWallBuilderController() : CurrentSplineIndex{ 0 } {}
 
 void AWallBuilderController::BeginPlay() {
+	Super::BeginPlay();
+
+	MessageDelegate.BindUFunction(this, "DisplayMessage");
 
 	SetShowMouseCursor(true);
 
@@ -13,6 +16,8 @@ void AWallBuilderController::BeginPlay() {
 		FName WallSplineName = "Wall Spline" + CurrentSplineIndex;
 		AWallSpline* WallSpline = NewObject<AWallSpline>(this, SplineType, WallSplineName);
 		WallSplines.Add(WallSpline);
+
+		MessageDelegate.Execute("New WallSpline Actor Created");
 	}
 }
 
@@ -89,6 +94,7 @@ void AWallBuilderController::HandleLeftMouseClick() {
 	GetHitResultUnderCursorByChannel(TraceTypeQuery1, true, HitResult);
 
 	WallSplines[CurrentSplineIndex]->AddNewSplinePoint(HitResult.Location);
+	MessageDelegate.Execute("New Spline Point Added");
 }
 
 void AWallBuilderController::HandleRightMouseClick() {
@@ -97,18 +103,28 @@ void AWallBuilderController::HandleRightMouseClick() {
 		FName WallSplineName = "Wall Spline" + CurrentSplineIndex;
 		AWallSpline* WallSpline = NewObject<AWallSpline>(this, SplineType, WallSplineName);
 		WallSplines.Add(WallSpline);
+
+		MessageDelegate.Execute("New WallSpline Actor Created");
 	}
 }
 
 void AWallBuilderController::HandleKeyboardInputJ() {
 	if (CurrentSplineIndex > 0) {
 		--CurrentSplineIndex;
+		MessageDelegate.Execute("Previous WallSpline Actor Selected");
+	}
+	else {
+		MessageDelegate.Execute("It's already the first WallSpline Actor");
 	}
 }
 
 void AWallBuilderController::HandleKeyboardInputL() {
 	if (CurrentSplineIndex < WallSplines.Num() - 1) {
 		++CurrentSplineIndex;
+		MessageDelegate.Execute("Next WallSpline Actor Selected");
+	}
+	else {
+		MessageDelegate.Execute("It's already the last WallSpline Actor");
 	}
 }
 
@@ -126,15 +142,28 @@ void AWallBuilderController::HandleKeyboardInputX() {
 		}
 		CurrentSplineIndex += WallSplines.Num();
 		CurrentSplineIndex = CurrentSplineIndex % WallSplines.Num();
+
+		MessageDelegate.Execute("Current WallSpline Actor Deleted");
 	}
 }
 
 void AWallBuilderController::HandleKeyboardInputZ() {
-	if (CurrentSplineIndex != -1 && WallSplines[CurrentSplineIndex]->RemoveLastSplinePoint()) {
+
+	bool Result{ false };
+	if (CurrentSplineIndex != -1) {
+		Result = WallSplines[CurrentSplineIndex]->RemoveLastSplinePoint();
+
+		if (!Result) {
+			MessageDelegate.Execute("Undo: Creating SplinePoint");
+		}
+	}
+
+	if (CurrentSplineIndex != -1 && Result) {
 		WallSplines[CurrentSplineIndex]->Destroy();
 		WallSplines[CurrentSplineIndex] = nullptr;
 		WallSplines.RemoveAt(CurrentSplineIndex);
 		--CurrentSplineIndex;
+		MessageDelegate.Execute("Undo: Creating SplinePoint Actor");
 
 		if (WallSplines.Num() == 0) {
 			CurrentSplineIndex = -1;
@@ -158,4 +187,5 @@ void AWallBuilderController::HandleKeyboardInputDelete() {
 	}
 
 	CurrentSplineIndex = -1;
+	MessageDelegate.Execute("All SplinePoint Actors Deleted");
 }

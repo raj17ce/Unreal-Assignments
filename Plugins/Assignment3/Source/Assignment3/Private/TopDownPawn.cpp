@@ -6,7 +6,7 @@
 #include "Math.h"
 
 // Sets default values
-ATopDownPawn::ATopDownPawn() : MappingContext{nullptr}, MoveAction{nullptr}, ZoomAction{nullptr}
+ATopDownPawn::ATopDownPawn() : MappingContext{nullptr}, MoveAction{nullptr}, ZoomAction{nullptr}, OffsetScaleFactor{50}, ArmLengthScaleFactor{25}
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
