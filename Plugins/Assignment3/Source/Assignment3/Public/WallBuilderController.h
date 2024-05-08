@@ -43,6 +43,7 @@ public:
 	void HandleKeyboardInputX();
 	void HandleKeyboardInputZ();
 	void HandleKeyboardInputDelete();
+	void HandleKeyboardInputEscape();
 
 	FMessageDelegate MessageDelegate;
 

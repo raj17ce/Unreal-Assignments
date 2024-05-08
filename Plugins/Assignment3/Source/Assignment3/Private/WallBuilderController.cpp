@@ -2,6 +2,7 @@
 
 
 #include "WallBuilderController.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 AWallBuilderController::AWallBuilderController() : CurrentSplineIndex{ 0 } {}
 
@@ -78,6 +79,13 @@ void AWallBuilderController::SetupInputComponent() {
 		MappingContext->MapKey(KeyboardDeleteAction, EKeys::Delete);
 		EIC->BindAction(KeyboardDeleteAction, ETriggerEvent::Completed, this, &AWallBuilderController::HandleKeyboardInputDelete);
 
+		//Keyboard Escape
+		auto* KeyboardEscapeAction = NewObject<UInputAction>();
+		KeyboardEscapeAction->ValueType = EInputActionValueType::Boolean;
+
+		MappingContext->MapKey(KeyboardEscapeAction, EKeys::Escape);
+		EIC->BindAction(KeyboardEscapeAction, ETriggerEvent::Completed, this, &AWallBuilderController::HandleKeyboardInputEscape);
+
 		if (auto* LocalPlayerSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer())) {
 			LocalPlayerSubsystem->AddMappingContext(MappingContext, 0);
 		}
@@ -136,14 +144,14 @@ void AWallBuilderController::HandleKeyboardInputX() {
 
 		--CurrentSplineIndex;
 
+		MessageDelegate.Execute("Current WallSpline Actor Deleted");
+
 		if (WallSplines.Num() == 0) {
 			CurrentSplineIndex = -1;
 			return;
 		}
 		CurrentSplineIndex += WallSplines.Num();
 		CurrentSplineIndex = CurrentSplineIndex % WallSplines.Num();
-
-		MessageDelegate.Execute("Current WallSpline Actor Deleted");
 	}
 }
 
@@ -188,4 +196,8 @@ void AWallBuilderController::HandleKeyboardInputDelete() {
 
 	CurrentSplineIndex = -1;
 	MessageDelegate.Execute("All SplinePoint Actors Deleted");
+}
+
+void AWallBuilderController::HandleKeyboardInputEscape() {
+	this->ConsoleCommand("quit");
 }
