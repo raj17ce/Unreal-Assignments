@@ -26,6 +26,9 @@ public class Assignment4 : ModuleRules
 			new string[]
 			{
 				"Core",
+				"UMG",
+				"InputCore",
+				"EnhancedInput"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -37,7 +40,7 @@ public class Assignment4 : ModuleRules
 				"CoreUObject",
 				"Engine",
 				"Slate",
-				"SlateCore",
+				"SlateCore"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

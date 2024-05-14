@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "Materials/MaterialInterface.h"
 #include "MeshAssetManager.generated.h"
 
 USTRUCT(Blueprintable)
@@ -28,13 +29,10 @@ struct FMaterialData {
 	FString MaterialName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Material")
-	UMaterial* Material;
+	UTexture2D* MaterialIcon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Material")
-	float Roughness;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Material")
-	FLinearColor BaseColor;
+	UMaterialInterface* Material;
 };
 
 USTRUCT(Blueprintable)
