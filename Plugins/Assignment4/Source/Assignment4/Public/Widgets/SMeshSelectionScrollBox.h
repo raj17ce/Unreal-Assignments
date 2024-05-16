@@ -8,6 +8,8 @@
 #include "MeshAssetManager.h"
 #include "Engine/Font.h"
 
+DECLARE_DELEGATE_OneParam(FMeshThumbnailSelected, const FMeshData&)
+
 UENUM(BlueprintType)
 enum class EAssetType : uint8 {
 	Mesh,
@@ -42,6 +44,8 @@ public:
 	void GenerateMeshAssets();
 	void GenerateMaterialAssets();
 	void GenerateTextureAssets();
+
+	FMeshThumbnailSelected OnMeshThumbnailSelected;
 
 private:
 	void PopulateVerticalBox();

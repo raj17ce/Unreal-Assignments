@@ -203,7 +203,7 @@ void SMeshSelectionScrollBox::CreateMeshThumbnail(const FMeshData& MeshData) {
 		TSharedPtr<SImage> ThumbnailImage = SNew(SImage).Image(ThumbnailBrush).Cursor(EMouseCursor::Hand)
 			.OnMouseButtonDown_Lambda([MeshData, this](const FGeometry& Geometry, const FPointerEvent& MouseEvent) {
 			if (MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton) {
-				//Todo
+				OnMeshThumbnailSelected.ExecuteIfBound(MeshData);
 				return FReply::Handled();
 			}
 			return FReply::Unhandled();

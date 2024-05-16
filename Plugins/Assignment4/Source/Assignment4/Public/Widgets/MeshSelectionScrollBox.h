@@ -27,12 +27,12 @@ public:
 	virtual const FText GetPaletteCategory() override;
 	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
 
+	TSharedPtr<SMeshSelectionScrollBox> MeshSelectionScrollBox;
 private:
 	TSharedPtr<SBorder> BorderBox;
 	TSharedPtr<SVerticalBox> VerticalBox;
 	TSharedPtr<STextBlock> TitleTextBox;
 	TSharedPtr<SBox> SizeBox;
-	TSharedPtr<SMeshSelectionScrollBox> MeshSelectionScrollBox;
 	FText AssetsTitle;
 
 	void PopulateAssetsTitle();
