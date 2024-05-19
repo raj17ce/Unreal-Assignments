@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class ASSIGNMENT2_API AA2GameMode : public AGameModeBase
+class ASSIGNMENT_1_2_API AA2GameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	

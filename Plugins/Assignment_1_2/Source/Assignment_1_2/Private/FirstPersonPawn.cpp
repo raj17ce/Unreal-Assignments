@@ -22,7 +22,7 @@ AFirstPersonPawn::AFirstPersonPawn() : PawnMappingContext{ nullptr }, MoveAction
 	CameraComponent->SetupAttachment(CapsuleComponent);
 
 	FloatingPawnMovement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Floating Pawn Movement"));
-	PawnAttributeAsset = LoadObject<UPawnAttributeAsset>(this, TEXT("/Script/Assignment2.PawnAttributeAsset'/Game/Assignment2/Data/BP_FPPAsset.BP_FPPAsset'"));
+	PawnAttributeAsset = LoadObject<UPawnAttributeAsset>(this, TEXT("/Script/Assignment_1_2.PawnAttributeAsset'/Assignment_1_2/Data/BP_FPPAsset.BP_FPPAsset'"));
 }
 
 // Called when the game starts or when spawned

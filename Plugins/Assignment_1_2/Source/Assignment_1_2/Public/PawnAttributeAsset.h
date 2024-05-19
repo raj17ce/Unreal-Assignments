@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class ASSIGNMENT2_API UPawnAttributeAsset : public UDataAsset
+class ASSIGNMENT_1_2_API UPawnAttributeAsset : public UDataAsset
 {
 	GENERATED_BODY()
 	

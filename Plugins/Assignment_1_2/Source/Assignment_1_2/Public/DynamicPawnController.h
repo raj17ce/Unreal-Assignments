@@ -34,7 +34,7 @@ public:
 };
 
 UCLASS()
-class ASSIGNMENT2_API ADynamicPawnController : public APlayerController
+class ASSIGNMENT_1_2_API ADynamicPawnController : public APlayerController
 {
 	GENERATED_BODY()
 

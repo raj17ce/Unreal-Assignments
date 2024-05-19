@@ -7,7 +7,7 @@
 
 ADynamicPawnController::ADynamicPawnController() : CurrentPawn{ nullptr }, CurrentPawnIndex{0} {
 
-	PawnDataTable = LoadObject<UDataTable>(nullptr, TEXT("/Script/Engine.DataTable'/Game/Assignment2/Data/BP_PawnDataTable.BP_PawnDataTable'"));
+	PawnDataTable = LoadObject<UDataTable>(nullptr, TEXT("/Script/Engine.DataTable'/Assignment_1_2/Data/BP_PawnDataTable.BP_PawnDataTable'"));
 	PawnNames = PawnDataTable->GetRowNames();
 }
 

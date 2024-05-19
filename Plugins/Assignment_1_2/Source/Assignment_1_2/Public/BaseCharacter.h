@@ -8,7 +8,7 @@
 #include "BaseCharacter.generated.h"
 
 UCLASS()
-class ASSIGNMENT2_API ABaseCharacter : public ACharacter
+class ASSIGNMENT_1_2_API ABaseCharacter : public ACharacter
 {
 	GENERATED_BODY()
 

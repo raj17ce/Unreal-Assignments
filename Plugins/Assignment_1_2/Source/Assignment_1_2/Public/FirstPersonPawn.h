@@ -16,7 +16,7 @@
 #include "FirstPersonPawn.generated.h"
 
 UCLASS()
-class ASSIGNMENT2_API AFirstPersonPawn : public APawn {
+class ASSIGNMENT_1_2_API AFirstPersonPawn : public APawn {
 	GENERATED_BODY()
 
 public:
