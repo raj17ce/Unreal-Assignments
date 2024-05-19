@@ -9,6 +9,8 @@
 #include "SelectionWidget.generated.h"
 
 DECLARE_DELEGATE_OneParam(FWidgetMeshThumbnailSelected, const FMeshData&)
+DECLARE_DELEGATE_OneParam(FWidgetMaterialThumbnailSelected, const FMaterialData&)
+DECLARE_DELEGATE_OneParam(FWidgetTextureThumbnailSelected, const FTextureData&)
 
 /**
  * 
@@ -34,4 +36,6 @@ public:
 	virtual void NativeConstruct() override;
 
 	FWidgetMeshThumbnailSelected OnWidgetMeshThumbnailSelected;
+	FWidgetMaterialThumbnailSelected OnWidgetMaterialThumbnailSelected;
+	FWidgetTextureThumbnailSelected OnWidgetTextureThumbnailSelected;
 };

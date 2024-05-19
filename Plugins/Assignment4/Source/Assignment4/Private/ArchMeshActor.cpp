@@ -2,9 +2,3 @@
 
 
 #include "ArchMeshActor.h"
-
-AArchMeshActor::AArchMeshActor() {
-	RootStaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("Static Mesh Component");
-
-	SetRootComponent(RootStaticMeshComponent);
-}

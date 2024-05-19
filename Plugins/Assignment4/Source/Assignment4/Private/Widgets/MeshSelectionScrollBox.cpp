@@ -96,7 +96,7 @@ void UMeshSelectionScrollBox::PopulateSizeBox() {
 	SizeBox = SNew(SBox);
 
 	SizeBox->SetWidthOverride(480);
-	SizeBox->SetHeightOverride(130);
+	SizeBox->SetHeightOverride(140);
 
 	SizeBox->SetHAlign(HAlign_Fill);
 	SizeBox->SetVAlign(VAlign_Fill);

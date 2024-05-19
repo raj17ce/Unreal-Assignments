@@ -44,4 +44,10 @@ public:
 
 	UFUNCTION()
 	void SpawnArchMeshActor(const FMeshData& MeshData);
+
+	UFUNCTION()
+	void ChangeActorMaterial(const FMaterialData& MaterialData);
+
+	UFUNCTION()
+	void ChangeActorTexture(const FTextureData& TextureData);
 };

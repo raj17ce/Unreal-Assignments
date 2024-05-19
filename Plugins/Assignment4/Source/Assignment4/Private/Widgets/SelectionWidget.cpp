@@ -10,4 +10,12 @@ void USelectionWidget::NativeConstruct() {
 	MeshScrollBox->MeshSelectionScrollBox->OnMeshThumbnailSelected.BindLambda([this](const FMeshData& MeshData) {
 		OnWidgetMeshThumbnailSelected.ExecuteIfBound(MeshData);
 	});
+
+	MaterialScrollBox->MeshSelectionScrollBox->OnMaterialThumbnailSelected.BindLambda([this](const FMaterialData& MaterialData) {
+		OnWidgetMaterialThumbnailSelected.ExecuteIfBound(MaterialData);
+	});
+
+	TextureScrollBox->MeshSelectionScrollBox->OnTextureThumbnailSelected.BindLambda([this](const FTextureData& TextureData) {
+		OnWidgetTextureThumbnailSelected.ExecuteIfBound(TextureData);
+	});
 }

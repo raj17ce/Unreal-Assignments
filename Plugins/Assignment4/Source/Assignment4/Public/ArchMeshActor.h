@@ -14,9 +14,4 @@ class ASSIGNMENT4_API AArchMeshActor : public AStaticMeshActor
 {
 	GENERATED_BODY()
 
-public:
-	AArchMeshActor();
-
-	UPROPERTY()
-	UStaticMeshComponent* RootStaticMeshComponent;
 };

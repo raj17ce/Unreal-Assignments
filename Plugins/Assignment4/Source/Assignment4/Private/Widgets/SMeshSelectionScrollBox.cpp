@@ -223,7 +223,7 @@ void SMeshSelectionScrollBox::CreateMaterialThumbnail(const FMaterialData& Mater
 		TSharedPtr<SImage> ThumbnailImage = SNew(SImage).Image(ThumbnailBrush).Cursor(EMouseCursor::Hand)
 			.OnMouseButtonDown_Lambda([MaterialData, this](const FGeometry& Geometry, const FPointerEvent& MouseEvent) {
 			if (MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton) {
-				//Todo
+				OnMaterialThumbnailSelected.ExecuteIfBound(MaterialData);
 				return FReply::Handled();
 			}
 			return FReply::Unhandled();
@@ -243,7 +243,7 @@ void SMeshSelectionScrollBox::CreateTextureThumbnail(const FTextureData& Texture
 		TSharedPtr<SImage> ThumbnailImage = SNew(SImage).Image(ThumbnailBrush).Cursor(EMouseCursor::Hand)
 			.OnMouseButtonDown_Lambda([TextureData, this](const FGeometry& Geometry, const FPointerEvent& MouseEvent) {
 			if (MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton) {
-				//Todo
+				OnTextureThumbnailSelected.ExecuteIfBound(TextureData);
 				return FReply::Handled();
 			}
 			return FReply::Unhandled();

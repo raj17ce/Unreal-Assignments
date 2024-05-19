@@ -9,6 +9,8 @@
 #include "Engine/Font.h"
 
 DECLARE_DELEGATE_OneParam(FMeshThumbnailSelected, const FMeshData&)
+DECLARE_DELEGATE_OneParam(FMaterialThumbnailSelected, const FMaterialData&)
+DECLARE_DELEGATE_OneParam(FTextureThumbnailSelected, const FTextureData&)
 
 UENUM(BlueprintType)
 enum class EAssetType : uint8 {
@@ -46,6 +48,8 @@ public:
 	void GenerateTextureAssets();
 
 	FMeshThumbnailSelected OnMeshThumbnailSelected;
+	FMaterialThumbnailSelected OnMaterialThumbnailSelected;
+	FTextureThumbnailSelected OnTextureThumbnailSelected;
 
 private:
 	void PopulateVerticalBox();

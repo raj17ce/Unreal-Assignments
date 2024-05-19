@@ -20,6 +20,8 @@ void AInteractiveArchController::BeginPlay() {
 	SelectionWidget->TextureScrollBox->SetVisibility(ESlateVisibility::Hidden);
 
 	SelectionWidget->OnWidgetMeshThumbnailSelected.BindUFunction(this, "SpawnArchMeshActor");
+	SelectionWidget->OnWidgetMaterialThumbnailSelected.BindUFunction(this, "ChangeActorMaterial");
+	SelectionWidget->OnWidgetTextureThumbnailSelected.BindUFunction(this, "ChangeActorTexture");
 }
 
 void AInteractiveArchController::SetupInputComponent() {
@@ -128,13 +130,20 @@ void AInteractiveArchController::SpawnArchMeshActor(const FMeshData& MeshData) {
 		FActorSpawnParameters ActorSpawnParameters;
 		ActorSpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
+		UMaterialInstanceDynamic* DynamicMaterial{};
+
 		if (HitResultActor->IsA<AArchMeshActor>()) {
 			LastHitLocation = HitResultActor->GetActorLocation();
 			
-			auto* PreviousActor = Cast<AArchMeshActor>(HitResultActor);
+			auto* CurrentActor = Cast<AArchMeshActor>(HitResultActor);
 
-			FBox HitMeshBoundingBox = PreviousActor->RootStaticMeshComponent->GetStaticMesh()->GetBoundingBox();
+			FBox HitMeshBoundingBox = CurrentActor->GetStaticMeshComponent()->GetStaticMesh()->GetBoundingBox();
 			LastHitLocation.Z += HitMeshBoundingBox.Min.Z;
+
+			DynamicMaterial = Cast<UMaterialInstanceDynamic>(CurrentActor->GetStaticMeshComponent()->GetMaterial(0));
+			if (!DynamicMaterial) {
+				DynamicMaterial = UMaterialInstanceDynamic::Create(CurrentActor->GetStaticMeshComponent()->GetMaterial(0), NULL);
+			}
 
 			HitResultActor->Destroy();
 			HitResultActor = nullptr;
@@ -143,13 +152,47 @@ void AInteractiveArchController::SpawnArchMeshActor(const FMeshData& MeshData) {
 		FBox MeshBoundingBox = MeshData.Mesh->GetBoundingBox();
 		LastHitLocation.Z += (-1 * MeshBoundingBox.Min.Z);
 
-		if (AArchMeshActor* SpawnedMesh = GetWorld()->SpawnActor<AArchMeshActor>(LastHitLocation, FRotator::ZeroRotator, ActorSpawnParameters)) {
-			SpawnedMesh->RootStaticMeshComponent->SetMobility(EComponentMobility::Movable);
-			SpawnedMesh->RootStaticMeshComponent->SetStaticMesh(MeshData.Mesh);
+		if (AArchMeshActor* SpawnedActor = GetWorld()->SpawnActor<AArchMeshActor>(LastHitLocation, FRotator::ZeroRotator, ActorSpawnParameters)) {
+			SpawnedActor->GetStaticMeshComponent()->SetMobility(EComponentMobility::Movable);
+			SpawnedActor->GetStaticMeshComponent()->SetStaticMesh(MeshData.Mesh);
 
-			HitResultActor = SpawnedMesh;
+			HitResultActor = SpawnedActor;
+
+			if (DynamicMaterial) {
+				SpawnedActor->GetStaticMeshComponent()->SetMaterial(0, DynamicMaterial);
+			}
 
 			MakeAllScrollBoxesVisible();
+		}
+	}
+}
+
+void AInteractiveArchController::ChangeActorMaterial(const FMaterialData& MaterialData) {
+	if (MaterialData.Material) {
+		if (HitResultActor->IsA<AArchMeshActor>()) {
+			auto* CurrentActor = Cast<AArchMeshActor>(HitResultActor);
+
+			CurrentActor->GetStaticMeshComponent()->SetMaterial(0, MaterialData.Material);
+		}
+	}
+}
+
+void AInteractiveArchController::ChangeActorTexture(const FTextureData& TextureData) {
+	if (TextureData.Texture && HitResultActor->IsA<AArchMeshActor>()) {
+		auto* CurrentActor = Cast<AArchMeshActor>(HitResultActor);
+
+		if (auto* Material = CurrentActor->GetStaticMeshComponent()->GetMaterial(0)) {
+			
+			auto* DynamicMaterial = Cast<UMaterialInstanceDynamic>(Material);
+
+			if (!DynamicMaterial) {
+				DynamicMaterial = UMaterialInstanceDynamic::Create(Material, NULL);
+			}
+
+			if (DynamicMaterial) {
+				DynamicMaterial->SetTextureParameterValue("SourceTexture", TextureData.Texture);
+				CurrentActor->GetStaticMeshComponent()->SetMaterial(0, DynamicMaterial);
+			}
 		}
 	}
 }
