@@ -10,14 +10,6 @@
 			"LoadingPhase": "Default"
 		},
 		{
-			"Name": "Assignment1",
-			"Type": "Runtime",
-			"LoadingPhase": "Default",
-			"AdditionalDependencies": [
-				"Engine"
-			]
-		},
-		{
 			"Name": "Assignment2",
 			"Type": "Runtime",
 			"LoadingPhase": "Default",

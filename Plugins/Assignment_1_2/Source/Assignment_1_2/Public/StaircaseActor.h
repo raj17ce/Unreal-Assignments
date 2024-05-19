@@ -27,7 +27,7 @@ struct FStairComponent {
 };
 
 UCLASS()
-class ASSIGNMENT1_API AStaircaseActor : public AActor
+class ASSIGNMENT_1_2_API AStaircaseActor : public AActor
 {
 	GENERATED_BODY()
 	
@@ -51,7 +51,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties", meta = (ClampMin = "0.01", UIMin = "0.01"))
 	FVector StairDimensions;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties", meta = (ClampMin = "100", UIMin = "100", EditCondition = "StairCaseType==EStaircaseType::OpenStaircase"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties")
 	FVector StairTranslationOffset;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Stair Properties")
