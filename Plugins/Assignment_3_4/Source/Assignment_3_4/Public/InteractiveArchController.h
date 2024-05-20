@@ -3,11 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "WallSpline.h"
 #include "GameFramework/PlayerController.h"
 #include "Widgets/SelectionWidget.h"
 #include "Templates/SubclassOf.h"
 #include "GameFramework/Actor.h"
+#include "../Plugins/EnhancedInput/Source/EnhancedInput/Public/InputMappingContext.h"
 #include "InteractiveArchController.generated.h"
+
+DECLARE_DELEGATE_OneParam(FMessageDelegate, const FString&)
 
 /**
  * 
@@ -22,10 +26,32 @@ public:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
+	//Core
+
+	bool bToggleInputContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UUserWidget* SwitchModeWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	TSubclassOf<UUserWidget> SwitchModeWidgetClass;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void BindToggleDispatcher();
+
+	UFUNCTION(BlueprintCallable)
+	void ToggleMappingContext();
+
+	//Mesh Generator
+	void SetupMeshGeneratorInputComponent();
+
+	UPROPERTY()
+	UInputMappingContext* MeshGeneratorMappingContext;
+
 	UPROPERTY()
 	FVector LastHitLocation;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	USelectionWidget* SelectionWidget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Widget")
@@ -36,8 +62,8 @@ public:
 	UPROPERTY()
 	AActor* HitResultActor;
 
-	void HandleLeftClick();
-	void HandleTabKeyPress();
+	void HandleMeshGeneratorLeftClick();
+	void HandleMeshGeneratorTabKeyPress();
 
 	void MakeMeshScrollBoxVisible();
 	void MakeAllScrollBoxesVisible();
@@ -50,4 +76,44 @@ public:
 
 	UFUNCTION()
 	void ChangeActorTexture(const FTextureData& TextureData);
+
+	//Wall Generator
+	void SetupWallGeneratorInputComponent();
+
+	UPROPERTY()
+	UInputMappingContext* WallGeneratorMappingContext;
+
+	UPROPERTY(BlueprintReadWrite)
+	UUserWidget* NotificationWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	TSubclassOf<UUserWidget> NotificationWidgetClass;
+
+	UPROPERTY(BlueprintReadWrite)
+	UUserWidget* HelpWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Widget")
+	TSubclassOf<UUserWidget> HelpWidgetWidgetClass;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Controller")
+	TArray<AWallSpline*> WallSplines;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Controller")
+	TSubclassOf<AWallSpline> SplineType;
+
+	int32 CurrentSplineIndex;
+
+	void HandleWallGeneratorLeftMouseClick();
+	void HandleWallGeneratorRightMouseClick();
+	void HandleWallGeneratorKeyboardInputJ();
+	void HandleWallGeneratorKeyboardInputL();
+	void HandleWallGeneratorKeyboardInputX();
+	void HandleWallGeneratorKeyboardInputZ();
+	void HandleWallGeneratorKeyboardInputDelete();
+	void HandleWallGeneratorKeyboardInputEscape();
+
+	FMessageDelegate MessageDelegate;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void DisplayMessage(const FString& Message);
 };
