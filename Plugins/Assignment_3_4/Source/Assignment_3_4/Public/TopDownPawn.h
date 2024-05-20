@@ -16,7 +16,7 @@
 #include "TopDownPawn.generated.h"
 
 UCLASS()
-class ASSIGNMENT3_API ATopDownPawn : public APawn
+class ASSIGNMENT_3_4_API ATopDownPawn : public APawn
 {
 	GENERATED_BODY()
 

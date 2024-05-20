@@ -9,7 +9,7 @@
 #include "WallSpline.generated.h"
 
 UCLASS()
-class ASSIGNMENT3_API AWallSpline : public AActor
+class ASSIGNMENT_3_4_API AWallSpline : public AActor
 {
 	GENERATED_BODY()
 	

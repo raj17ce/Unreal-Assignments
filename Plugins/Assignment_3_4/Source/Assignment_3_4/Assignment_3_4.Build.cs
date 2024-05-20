@@ -10,6 +10,7 @@ public class Assignment_3_4 : ModuleRules
 		
 		PublicIncludePaths.AddRange(
 			new string[] {
+                "C:/Program Files/UE_5.2/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public"
 				// ... add public include paths required here ...
 			}
 			);

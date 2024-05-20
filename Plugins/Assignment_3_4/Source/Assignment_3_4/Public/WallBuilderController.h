@@ -17,7 +17,7 @@ DECLARE_DELEGATE_OneParam(FMessageDelegate, const FString&)
  * 
  */
 UCLASS()
-class ASSIGNMENT3_API AWallBuilderController : public APlayerController
+class ASSIGNMENT_3_4_API AWallBuilderController : public APlayerController
 {
 	GENERATED_BODY()
 	
