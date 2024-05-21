@@ -53,7 +53,7 @@ void AInteractiveArchController::BeginPlay() {
 		MessageDelegate.Execute("New WallSpline Actor Created");
 	}
 
-	SetInputMode(InputMode);
+	SetInputMode(InputModeGameAndUI);
 
 	HandlePawnSwitchPKeyPress();
 }
@@ -151,7 +151,7 @@ void AInteractiveArchController::HandleMeshGeneratorLeftClick() {
 		SelectionWidget->AddToViewport();
 		SelectionWidget->SetVisibility(ESlateVisibility::Visible);
 
-		SetInputMode(InputMode);
+		SetInputMode(InputModeGameAndUI);
 		bShowMouseCursor = true;
 	}
 
@@ -179,7 +179,9 @@ void AInteractiveArchController::HandleMeshGeneratorLeftClick() {
 				
 				if (HitResultActor->IsA<AArchMeshActor>()) {
 					LastHitLocation = HitResult.Location;
-					
+
+					GetPawn()->SetActorLocation(LastHitLocation + FVector{ 0, 0, 100 });
+
 					MakeAllScrollBoxesVisible();
 				}
 				else {
@@ -257,6 +259,8 @@ void AInteractiveArchController::SpawnArchMeshActor(const FMeshData& MeshData) {
 
 			MakeAllScrollBoxesVisible();
 		}
+
+		GetPawn()->SetActorLocation(LastHitLocation + FVector{ 0, 0, 100 });
 	}
 }
 

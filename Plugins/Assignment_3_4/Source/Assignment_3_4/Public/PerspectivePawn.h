@@ -10,6 +10,7 @@
 #include "InputMappingContext.h"
 #include "InputAction.h"
 #include "EnhancedInputSubsystems.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "PerspectivePawn.generated.h"
 
 UCLASS()
@@ -31,6 +32,9 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Movement")
+	USpringArmComponent* SpringArm;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 	UCameraComponent* Camera;

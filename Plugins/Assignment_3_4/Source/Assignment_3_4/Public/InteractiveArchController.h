@@ -74,7 +74,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Widget")
 	TSubclassOf<USelectionWidget> SelectionWidgetClass;
 
-	FInputModeGameAndUI InputMode{};
+	FInputModeGameAndUI InputModeGameAndUI{};
 
 	UPROPERTY()
 	AActor* HitResultActor;

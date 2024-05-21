@@ -40,6 +40,10 @@ void AWallSpline::GenerateSplineMeshes() {
 
 	int32 SplinePointIndex = SplineComponent->GetNumberOfSplinePoints() - 2;
 
+	if (SplinePointIndex < 0) {
+		return;
+	}
+
 	SetSplinePointZeroTangents(SplinePointIndex);
 
 	FVector StartLocation = SplineComponent->GetLocationAtSplinePoint(SplinePointIndex, ESplineCoordinateSpace::World);
@@ -100,7 +104,7 @@ bool AWallSpline::RemoveLastSplinePoint() {
 	int32 LastIndex = SplineMeshComponents.Num() - 1;
 	bool IsSplineDeleted{ false };
 	
-	if (LastIndex > 0) {
+	if (LastIndex >= 0) {
 		SplineComponent->RemoveSplinePoint(LastIndex+1);
 
 		if (SplineMeshComponents[LastIndex]) {
@@ -110,7 +114,7 @@ bool AWallSpline::RemoveLastSplinePoint() {
 
 		SplineMeshComponents.RemoveAt(LastIndex);
 
-		if (LastIndex == 1) {
+		if (LastIndex == 0) {
 			SplineComponent->ClearSplinePoints();
 			IsSplineDeleted = true;
 		}

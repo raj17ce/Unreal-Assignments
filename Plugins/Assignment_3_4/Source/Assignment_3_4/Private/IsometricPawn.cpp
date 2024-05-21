@@ -9,21 +9,22 @@ AIsometricPawn::AIsometricPawn() : IsometricPawnMappingContext{ nullptr }, Camer
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	USceneComponent* SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRoot"));
+	USceneComponent* SceneRoot = CreateDefaultSubobject<USceneComponent>("Scene Root");
 	SetRootComponent(SceneRoot);
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
-	SpringArm->SetupAttachment(SceneRoot);
 	SpringArm->SetRelativeRotation(FRotator{ -45.0, 45.0, 0.0 });
 	SpringArm->TargetArmLength = 2500;
 	SpringArm->bEnableCameraLag = true;
 	SpringArm->bEnableCameraRotationLag = true;
 	SpringArm->CameraLagSpeed = 5.0f;
 	SpringArm->CameraRotationLagSpeed = 30.0f;
+	SpringArm->bDoCollisionTest = false;
+	SpringArm->SetupAttachment(SceneRoot);
 
-	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("IsometricCamera"));
-	Camera->SetupAttachment(SpringArm, SpringArm->SocketName);
+	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->AddRelativeRotation(FRotator{ 0, 0, 0 });
+	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
 
 	FloatingPawnMovement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("FloatingPawnMovement"));
 }

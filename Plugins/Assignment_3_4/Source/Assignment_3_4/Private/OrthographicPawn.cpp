@@ -6,17 +6,20 @@
 AOrthographicPawn::AOrthographicPawn() : OrthographicPawnMappingContext{ nullptr }, CameraMovementAction{ nullptr }, ZoomInOutAction{ nullptr }, CameraXRotationAction{ nullptr } {
 	PrimaryActorTick.bCanEverTick = true;
 
-	USceneComponent* SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRoot"));
+	USceneComponent* SceneRoot = CreateDefaultSubobject<USceneComponent>("Scene Root");
 	SetRootComponent(SceneRoot);
 
-	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("OrthographicSpringArm"));
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	SpringArm->SetRelativeRotation(FRotator(-90.0, 0.0, 0.0));
+	SpringArm->TargetArmLength = 800.0f;
+	SpringArm->bEnableCameraLag = true;
+	SpringArm->CameraLagSpeed = 5.0f;
+	SpringArm->bDoCollisionTest = false;
 	SpringArm->SetupAttachment(SceneRoot);
-	SpringArm->TargetOffset.Z = 500.0f;
 
-	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("OrthographicCamera"));
-	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
-	Camera->SetRelativeRotation(FRotator(-90.0, 0.0, 0.0));
+	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->bUsePawnControlRotation = false;
+	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
 
 	FloatingPawnMovement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Movement"));
 }
@@ -90,8 +93,8 @@ void AOrthographicPawn::HandleCameraMovement(const FInputActionValue& ActionValu
 void AOrthographicPawn::HandleCameraZoom(const FInputActionValue& ActionValue) {
 	float ZoomScale = ActionValue.Get<float>();
 
-	SpringArm->TargetOffset.Z -= ZoomScale * 25;
-	SpringArm->TargetOffset.Z = FMath::Clamp(SpringArm->TargetOffset.Z, 250.0f, FLT_MAX);
+	SpringArm->TargetArmLength -= ZoomScale * 25;
+	SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength, 250.0f, FLT_MAX);
 }
 
 void AOrthographicPawn::HandleRotationX(const FInputActionValue& ActionValue) {

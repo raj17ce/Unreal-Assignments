@@ -9,12 +9,20 @@ APerspectivePawn::APerspectivePawn() : PerspectivePawnMapping{ nullptr }, MoveAc
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	USceneComponent* SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRoot"));
+	USceneComponent* SceneRoot = CreateDefaultSubobject<USceneComponent>("Scene Root");
 	SetRootComponent(SceneRoot);
+
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	SpringArm->TargetArmLength = 500.0f;
+	SpringArm->bEnableCameraLag = true;
+	SpringArm->CameraLagSpeed = 5.0f;
+	SpringArm->bDoCollisionTest = false;
+	SpringArm->bUsePawnControlRotation = true;
+	SpringArm->SetupAttachment(SceneRoot);
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->bUsePawnControlRotation = true;
-	Camera->SetupAttachment(SceneRoot);
+	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
 
 	FloatingPawnMovement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Movement"));
 }
