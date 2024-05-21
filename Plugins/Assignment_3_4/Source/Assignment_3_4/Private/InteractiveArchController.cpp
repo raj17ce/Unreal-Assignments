@@ -8,7 +8,11 @@
 #include "../Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputSubsystems.h"
 #include "ArchMeshActor.h"
 
-AInteractiveArchController::AInteractiveArchController() : CurrentSplineIndex{ 0 }, LastHitLocation{ 0 }, SelectionWidget{ nullptr }, bToggleInputContext{ true } {}
+AInteractiveArchController::AInteractiveArchController() : CurrentSplineIndex{ 0 }, LastHitLocation{ 0 }, SelectionWidget{ nullptr }, bToggleInputContext{ true }, CurrentPawnIndex{ -1 }, CurrentMappingContext{nullptr} {
+	PawnReferences.Add(APerspectivePawn::StaticClass());
+	PawnReferences.Add(AOrthographicPawn::StaticClass());
+	PawnReferences.Add(AIsometricPawn::StaticClass());
+}
 
 void AInteractiveArchController::BeginPlay() {
 	Super::BeginPlay();
@@ -48,17 +52,73 @@ void AInteractiveArchController::BeginPlay() {
 
 		MessageDelegate.Execute("New WallSpline Actor Created");
 	}
+
+	SetInputMode(InputMode);
+
+	HandlePawnSwitchPKeyPress();
 }
 
 void AInteractiveArchController::SetupInputComponent() {
 	Super::SetupInputComponent();
 
+	SetupPawnSwitchInputComponent();
 	SetupMeshGeneratorInputComponent();
 	SetupWallGeneratorInputComponent();
 
 	if (auto* Subsytem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer())) {
+		if (PawnSwitchMappingContext) {
+			Subsytem->AddMappingContext(PawnSwitchMappingContext, 0);
+		}
 		if (MeshGeneratorMappingContext) {
 			Subsytem->AddMappingContext(MeshGeneratorMappingContext, 0);
+			CurrentMappingContext = MeshGeneratorMappingContext;
+		}
+	}
+}
+
+void AInteractiveArchController::SetupPawnSwitchInputComponent() {
+	if (auto* EIC = Cast<UEnhancedInputComponent>(InputComponent)) {
+		PawnSwitchMappingContext = NewObject<UInputMappingContext>();
+
+		//P-Key Mapping
+
+		auto* PKeyPressAction = NewObject<UInputAction>();
+		PKeyPressAction->ValueType = EInputActionValueType::Boolean;
+
+		PawnSwitchMappingContext->MapKey(PKeyPressAction, EKeys::P);
+
+		EIC->BindAction(PKeyPressAction, ETriggerEvent::Completed, this, &AInteractiveArchController::HandlePawnSwitchPKeyPress);
+	}
+}
+
+void AInteractiveArchController::HandlePawnSwitchPKeyPress() {
+	CurrentPawnIndex = (CurrentPawnIndex + 1) % PawnReferences.Num();
+
+	if (GetPawn()) {
+		GetPawn()->Destroy();
+	}
+
+	if (auto* SubSystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()) {
+		SubSystem->ClearAllMappings();
+	}
+
+	FActorSpawnParameters SpawnActorParams;
+	SpawnActorParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	FRotator Rotator = FRotator::ZeroRotator;
+
+	APawn* SpawnedPawn = GetWorld()->SpawnActor<APawn>(PawnReferences[CurrentPawnIndex], LastHitLocation + FVector{ 0,0, 50 }, Rotator, SpawnActorParams);
+
+	if (SpawnedPawn) {
+		Possess(SpawnedPawn);
+	}
+
+	if (auto* SubSystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()) {
+		if (PawnSwitchMappingContext) {
+			SubSystem->AddMappingContext(PawnSwitchMappingContext, 0);
+		}
+		if (CurrentMappingContext) {
+			SubSystem->AddMappingContext(CurrentMappingContext, 0);
 		}
 	}
 }
@@ -406,32 +466,13 @@ void AInteractiveArchController::HandleWallGeneratorKeyboardInputEscape() {
 void AInteractiveArchController::ToggleMappingContext() {
 	if (auto* Subsytem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer())) {
 
-		/*if (Subsytem->HasMappingContext(MeshGeneratorMappingContext)) {
-			Subsytem->ClearAllMappings();
-
-			if (WallGeneratorMappingContext) {
-				Subsytem->AddMappingContext(WallGeneratorMappingContext, 0);
-
-				if (NotificationWidget && HelpWidget) {
-					NotificationWidget->AddToViewport();
-					HelpWidget->AddToViewport();
-				}
-			}
-		}
-		else if (Subsytem->HasMappingContext(WallGeneratorMappingContext)) {
-			Subsytem->ClearAllMappings();
-
-			if (MeshGeneratorMappingContext) {
-				Subsytem->AddMappingContext(MeshGeneratorMappingContext, 0);
-			}
-		}*/
-
 		if (bToggleInputContext) {
-			Subsytem->ClearAllMappings();
+			Subsytem->RemoveMappingContext(MeshGeneratorMappingContext);
 			SelectionWidget->RemoveFromParent();
 
 			if (WallGeneratorMappingContext) {
 				Subsytem->AddMappingContext(WallGeneratorMappingContext, 0);
+				CurrentMappingContext = WallGeneratorMappingContext;
 
 				if (NotificationWidget && HelpWidget) {
 					NotificationWidget->AddToViewport();
@@ -442,12 +483,13 @@ void AInteractiveArchController::ToggleMappingContext() {
 			bToggleInputContext = !bToggleInputContext;
 		}
 		else {
-			Subsytem->ClearAllMappings();
+			Subsytem->RemoveMappingContext(WallGeneratorMappingContext);
 			NotificationWidget->RemoveFromParent();
 			HelpWidget->RemoveFromParent();
 
 			if (MeshGeneratorMappingContext) {
 				Subsytem->AddMappingContext(MeshGeneratorMappingContext, 0);
+				CurrentMappingContext = MeshGeneratorMappingContext;
 			}
 
 			bToggleInputContext = !bToggleInputContext;

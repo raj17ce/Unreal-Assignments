@@ -9,6 +9,9 @@
 #include "Templates/SubclassOf.h"
 #include "GameFramework/Actor.h"
 #include "../Plugins/EnhancedInput/Source/EnhancedInput/Public/InputMappingContext.h"
+#include "PerspectivePawn.h"
+#include "OrthographicPawn.h"
+#include "IsometricPawn.h"
 #include "InteractiveArchController.generated.h"
 
 DECLARE_DELEGATE_OneParam(FMessageDelegate, const FString&)
@@ -27,6 +30,18 @@ public:
 	virtual void SetupInputComponent() override;
 
 	//Core
+	UPROPERTY()
+	UInputMappingContext* CurrentMappingContext;
+
+	void SetupPawnSwitchInputComponent();
+
+	int32 CurrentPawnIndex;
+
+	UPROPERTY()
+	TArray<TSubclassOf<APawn>> PawnReferences;
+
+	UPROPERTY()
+	UInputMappingContext* PawnSwitchMappingContext;
 
 	bool bToggleInputContext;
 
@@ -41,6 +56,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ToggleMappingContext();
+
+	void HandlePawnSwitchPKeyPress();
 
 	//Mesh Generator
 	void SetupMeshGeneratorInputComponent();
