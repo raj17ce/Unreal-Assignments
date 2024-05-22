@@ -8,7 +8,7 @@
 #include "../Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputSubsystems.h"
 #include "ArchMeshActor.h"
 
-AInteractiveArchController::AInteractiveArchController() : CurrentSplineIndex{ 0 }, LastHitLocation{ 0 }, SelectionWidget{ nullptr }, bToggleInputContext{ true }, CurrentPawnIndex{ -1 }, CurrentMappingContext{nullptr} {
+AInteractiveArchController::AInteractiveArchController() : CurrentMappingContext{nullptr}, CurrentPawnIndex{ -1 }, bToggleInputContext{ true }, LastHitLocation{ 0 }, SelectionWidget{ nullptr }, CurrentSplineIndex{ 0 } {
 	PawnReferences.Add(APerspectivePawn::StaticClass());
 	PawnReferences.Add(AOrthographicPawn::StaticClass());
 	PawnReferences.Add(AIsometricPawn::StaticClass());

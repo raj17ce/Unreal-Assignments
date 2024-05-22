@@ -2,7 +2,7 @@
 	"FileVersion": 3,
 	"Version": 1,
 	"VersionName": "1.0",
-	"FriendlyName": "Assignment_1_2",
+	"FriendlyName": "Assignment_5_6",
 	"Description": "",
 	"Category": "Other",
 	"CreatedBy": "",
@@ -16,15 +16,9 @@
 	"Installed": false,
 	"Modules": [
 		{
-			"Name": "Assignment_1_2",
+			"Name": "Assignment_5_6",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
-		}
-	],
-	"Plugins": [
-		{
-			"Name": "EnhancedInput",
-			"Enabled": true
 		}
 	]
 }
