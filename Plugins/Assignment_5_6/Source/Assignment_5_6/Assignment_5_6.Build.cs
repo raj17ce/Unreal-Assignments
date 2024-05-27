@@ -26,6 +26,7 @@ public class Assignment_5_6 : ModuleRules
 			new string[]
 			{
 				"Core",
+                "ProceduralMeshComponent"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);

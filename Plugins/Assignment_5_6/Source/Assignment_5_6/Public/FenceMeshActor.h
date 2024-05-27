@@ -43,15 +43,33 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Defaults")
 	USceneComponent* SceneRoot;
 
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Spline")
 	USplineComponent* SplineComponent;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Vertical Rail")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Vertical Rail")
 	TSubclassOf<AVerticalRailActor> VerticalRailActorClass;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Vertical Rail")
-	AVerticalRailActor* VerticalRailActor;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vertical Rail")
+	UStaticMesh* RailingStaticMesh;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	TArray<UStaticMeshComponent*> RailingStaticMeshes;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	TArray<AVerticalRailActor*> VerticalRailActors;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fence")
+	FFenceProperties FenceProperties;
+
+	UFUNCTION(BlueprintCallable)
+	void GenerateStaticFence();
+
+	UFUNCTION(BlueprintCallable)
+	void DestroyStaticFence();
+
+	UFUNCTION(BlueprintCallable)
+	void GenerateProceduralFence();
 };
