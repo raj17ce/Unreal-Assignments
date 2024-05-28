@@ -56,13 +56,16 @@ public:
 	UStaticMesh* RailingStaticMesh;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
-	TArray<UStaticMeshComponent*> RailingStaticMeshes;
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
-	TArray<AVerticalRailActor*> VerticalRailActors;
+	TArray<UStaticMeshComponent*> RailingStaticComponents;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fence")
 	FFenceProperties FenceProperties;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fence")
+	UStaticMesh* HorizontalBeamStaticMesh;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	TArray<UStaticMeshComponent*> HorizontalBeamStaticComponents;
 
 	UFUNCTION(BlueprintCallable)
 	void GenerateStaticFence();
@@ -72,4 +75,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void GenerateProceduralFence();
+
+	void GenerateStaticHorizontalBeam();
+	void GenerateProceduralHorizontalBeam();
+	void DestroyStaticHorizontalBeam();
 };

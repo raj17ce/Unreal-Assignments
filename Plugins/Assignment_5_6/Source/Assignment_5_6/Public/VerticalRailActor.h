@@ -48,6 +48,8 @@ public:
 	void CreateVerticalRailActor(const FVector& RailingDimensions);
 
 	void GenerateTopMesh(const FVector& CubeDimensions);
+
+	UFUNCTION(BlueprintCallable)
 	void GenerateCube(int32 Section, const FVector& CubeDimensions);
 	void GenerateSphere(int32 Section, float Radius, int32 RingCount, int32 PointsCount, float ZOffset);
 
