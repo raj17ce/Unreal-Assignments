@@ -42,6 +42,8 @@ void AFenceMeshActor::GenerateStaticFence() {
 		FVector StartLocation = SplineComponent->GetLocationAtDistanceAlongSpline(DistanceCovered, ESplineCoordinateSpace::Local);
 		StartLocation.Z += FenceProperties.Height / 2;
 
+		FRotator StartRotation = SplineComponent->GetRotationAtDistanceAlongSpline(DistanceCovered, ESplineCoordinateSpace::Local);
+
 		UStaticMeshComponent* RailingStaticMeshComponent = NewObject<UStaticMeshComponent>(this);
 		RailingStaticMeshComponent->RegisterComponent();
 		RailingStaticMeshComponent->AttachToComponent(SplineComponent, FAttachmentTransformRules::KeepRelativeTransform);
@@ -51,6 +53,7 @@ void AFenceMeshActor::GenerateStaticFence() {
 		}
 		
 		RailingStaticMeshComponent->SetRelativeLocation(StartLocation);
+		RailingStaticMeshComponent->SetRelativeRotation(StartRotation);
 		RailingStaticMeshComponent->SetWorldScale3D(FVector{ FenceProperties.Length / 10, FenceProperties.Width / 10, FenceProperties.Height / 100});
 
 	
@@ -88,10 +91,12 @@ void AFenceMeshActor::GenerateProceduralFence() {
 		FVector StartLocation = SplineComponent->GetLocationAtDistanceAlongSpline(DistanceCovered, ESplineCoordinateSpace::World);
 		StartLocation.Z += FenceProperties.Height / 2;
 
+		FRotator StartRotation = SplineComponent->GetRotationAtDistanceAlongSpline(DistanceCovered, ESplineCoordinateSpace::Local);
+
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-		AVerticalRailActor* SpawnedVerticalRailActor = GetWorld()->SpawnActor<AVerticalRailActor>(VerticalRailActorClass, StartLocation, FRotator::ZeroRotator, SpawnParams);
+		AVerticalRailActor* SpawnedVerticalRailActor = GetWorld()->SpawnActor<AVerticalRailActor>(VerticalRailActorClass, StartLocation, StartRotation, SpawnParams);
 		SpawnedVerticalRailActor->CreateVerticalRailActor(FVector{FenceProperties.Length, FenceProperties.Width, FenceProperties.Height});
 
 		DistanceCovered += TotalSpacing;
@@ -174,14 +179,14 @@ void AFenceMeshActor::GenerateProceduralHorizontalBeam() {
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 		AVerticalRailActor* HorizontalBeamActorUp = GetWorld()->SpawnActor<AVerticalRailActor>(StartLocation, BeamRotation, SpawnParams);
-		HorizontalBeamActorUp->GenerateCube(0, FVector{Distance + 16, (3*FenceProperties.Width)/10 , (10*FenceProperties.Height) / 100});
+		HorizontalBeamActorUp->GenerateCube(0, FVector{Distance + 16, (3*FenceProperties.Width)/10 , (10*FenceProperties.Height) / 100}, 0.0f);
 		
 		// Down
 		StartLocation += (-UpDirection * (3 * FenceProperties.Height / 4));
 		StartLocation += (UpDirection * (FenceProperties.Height / 3));
 
 		AVerticalRailActor* HorizontalBeamActorDown = GetWorld()->SpawnActor<AVerticalRailActor>(StartLocation, BeamRotation, SpawnParams);
-		HorizontalBeamActorDown->GenerateCube(0, FVector{ Distance + 16, (3 * FenceProperties.Width) / 10 , (10 * FenceProperties.Height) / 100 });
+		HorizontalBeamActorDown->GenerateCube(0, FVector{ Distance + 16, (3 * FenceProperties.Width) / 10 , (10 * FenceProperties.Height) / 100 }, 0.0f);
 	}
 }
 

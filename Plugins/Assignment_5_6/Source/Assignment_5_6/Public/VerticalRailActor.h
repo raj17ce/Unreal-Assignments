@@ -46,14 +46,21 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void CreateVerticalRailActor(const FVector& RailingDimensions);
-
 	void GenerateTopMesh(const FVector& CubeDimensions);
 
-	UFUNCTION(BlueprintCallable)
-	void GenerateCube(int32 Section, const FVector& CubeDimensions);
+	void GenerateCube(int32 Section, const FVector& CubeDimensions, float ZOffset);
 	void GenerateSphere(int32 Section, float Radius, int32 RingCount, int32 PointsCount, float ZOffset);
-
-	UFUNCTION(BlueprintCallable)
+	void GenerateOval(int32 Section, float Radius, int32 RingCount, int32 PointsCount, float ZOffset, float ZFactor);
 	void GenerateBellShape(int32 Section, float BaseRadius, float Height, float RimRadius, float CurvatureFactor, int32 SlicesCount, int StacksCount, float ZOffset);
+	
+	UFUNCTION(BlueprintCallable)
+	void GenerateCone(int32 Section, float Radius, float Length, int32 RingCount, int32 PointsCount, float ZOffset);
+	UFUNCTION(BlueprintCallable)
+	void GenerateCylinder(int32 Section, float Radius, float Length, int32 RingCount, int32 PointsCount, float ZOffset);
+	UFUNCTION(BlueprintCallable)
+	void GenerateHorizontalHalfCylinder(int32 Section, float Radius, float Length, int32 RingCount, int32 PointsCount, FVector Offset);
+	void GeneratePyramid(int32 Section, const FVector& PyramidDimensions, float ZOffset);
+	//void GenerateCircle(int32 Section, float Radius, int32 PointsCount, float ZOffset);
+
 	void AddTriangle(TArray<int32>& Triangles, int32 Index1, int32 Index2, int32 Index3);
 };
