@@ -7,6 +7,7 @@
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
 #include "VerticalRailActor.h"
+#include "VerticalRailAssets.h"
 #include "FenceMeshActor.generated.h"
 
 USTRUCT(Blueprintable)
@@ -49,11 +50,11 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Spline")
 	USplineComponent* SplineComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Vertical Rail")
-	TSubclassOf<AVerticalRailActor> VerticalRailActorClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Vertical Rail")
+	UVerticalRailAssets* VerticalRailAssets;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vertical Rail")
-	UStaticMesh* RailingStaticMesh;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Vertical Rail")
+	ETopMeshType TopMeshType;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 	TArray<UStaticMeshComponent*> RailingStaticComponents;
