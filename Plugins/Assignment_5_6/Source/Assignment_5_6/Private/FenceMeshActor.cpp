@@ -105,6 +105,10 @@ void AFenceMeshActor::GenerateProceduralFence() {
 		}
 		if (SpawnedVerticalRailActor) {
 			SpawnedVerticalRailActor->CreateVerticalRailActor(FVector{ FenceProperties.Length, FenceProperties.Width, FenceProperties.Height });
+
+			if (SpawnedVerticalRailActor->TopMeshType == ETopMeshType::GothicTop || SpawnedVerticalRailActor->TopMeshType == ETopMeshType::GothicStarTop) {
+				AddActorLocalRotation(FRotator{ 0.0, 90.0, 0.0 });
+			}
 		}
 
 		DistanceCovered += TotalSpacing;

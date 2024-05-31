@@ -58,8 +58,6 @@ void AVerticalRailActor::GenerateTopMesh(const FVector& RailingDimensions) {
 		GenerateCube(1, FVector{ (2 * RailingDimensions.X) / 3, (2 * RailingDimensions.Y) / 3, RailingDimensions.X / 10 }, (RailingDimensions.Z / 2) + (RailingDimensions.X / 20));
 		GenerateCube(2, FVector{ RailingDimensions.X, RailingDimensions.Y, 2 * RailingDimensions.X / 3 }, (RailingDimensions.Z / 2) + (RailingDimensions.X / 10) + (RailingDimensions.X / 3));
 		GeneratePrism(3, FVector{ RailingDimensions.X, RailingDimensions.Y, RailingDimensions.X }, (RailingDimensions.Z / 2) + (RailingDimensions.X / 10) + (7 * RailingDimensions.X / 6));
-
-		AddActorLocalRotation(FRotator{ 0.0, 90.0, 0.0 });
 		break;
 	case ETopMeshType::GothicStarTop:
 		GenerateCube(1, FVector{ (2 * RailingDimensions.X) / 3, (2 * RailingDimensions.Y) / 3, RailingDimensions.X / 10 }, (RailingDimensions.Z / 2) + (RailingDimensions.X / 20));
@@ -67,8 +65,6 @@ void AVerticalRailActor::GenerateTopMesh(const FVector& RailingDimensions) {
 		GeneratePrism(3, FVector{ RailingDimensions.X, RailingDimensions.Y, RailingDimensions.X }, (RailingDimensions.Z / 2) + (RailingDimensions.X / 10) + (7 * RailingDimensions.X / 6));
 		GenerateSideTriangleLeft(4, FVector{ RailingDimensions.X, RailingDimensions.Y, RailingDimensions.X }, (RailingDimensions.Z / 2) + (RailingDimensions.X / 10) + (7 * RailingDimensions.X / 6));
 		GenerateSideTriangleRight(5, FVector{ RailingDimensions.X, RailingDimensions.Y, RailingDimensions.X }, (RailingDimensions.Z / 2) + (RailingDimensions.X / 10) + (7 * RailingDimensions.X / 6));
-
-		AddActorLocalRotation(FRotator{0.0, 90.0, 0.0});
 		break;
 	case ETopMeshType::RoundedOverTop:
 		GenerateCube(1, FVector{ (2 * RailingDimensions.X) / 3, (2 * RailingDimensions.Y) / 3, RailingDimensions.X / 10 }, (RailingDimensions.Z / 2) + (RailingDimensions.X / 20));
