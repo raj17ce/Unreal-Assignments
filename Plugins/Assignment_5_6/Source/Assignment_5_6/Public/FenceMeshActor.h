@@ -43,6 +43,7 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	void OnConstruction(const FTransform& Transform) override;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Defaults")
 	USceneComponent* SceneRoot;
@@ -55,6 +56,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Vertical Rail")
 	ETopMeshType TopMeshType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vertical Rail")
+	UMaterialInterface* SourceMaterial;
+
+	UPROPERTY()
+	UMaterialInstanceDynamic* DynamicMaterial;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 	TArray<UStaticMeshComponent*> RailingStaticComponents;
