@@ -41,6 +41,9 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
 	ASelectionArea* SpawnedActor;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, category = "Shape")
+	UMaterial* ShapeMaterial;
+
 	FInputModeGameAndUI InputMode{};
 
 	UFUNCTION()

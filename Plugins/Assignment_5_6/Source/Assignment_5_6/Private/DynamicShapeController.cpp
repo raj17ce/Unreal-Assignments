@@ -4,8 +4,7 @@
 #include "DynamicShapeController.h"
 
 
-ADynamicShapeController::ADynamicShapeController() : bIsActorMovable{true}, Widget{ nullptr }, SpawnedActor{nullptr}, ShapeType{EShapeType::Spherical} {}
-
+ADynamicShapeController::ADynamicShapeController() : bIsActorMovable{true}, ShapeType{ EShapeType::Spherical }, Widget{ nullptr }, SpawnedActor{nullptr} {}
 
 void ADynamicShapeController::BeginPlay() {
 	Super::BeginPlay();
@@ -20,10 +19,10 @@ void ADynamicShapeController::BeginPlay() {
 		Widget->BoxDimensions->SetVisibility(ESlateVisibility::Hidden);
 
 		Widget->ShapeType->OnSelectionChanged.AddDynamic(this, &ADynamicShapeController::HandleShapeTypeChange);
-		Widget->SphereRadius->OnValueChanged.AddDynamic(this, &ADynamicShapeController::HandleSphereRadiusChange);
-		Widget->BoxDimensionX->OnValueChanged.AddDynamic(this, &ADynamicShapeController::HandleBoxDimensionChange);
-		Widget->BoxDimensionY->OnValueChanged.AddDynamic(this, &ADynamicShapeController::HandleBoxDimensionChange);
-		Widget->BoxDimensionZ->OnValueChanged.AddDynamic(this, &ADynamicShapeController::HandleBoxDimensionChange);
+		Widget->SphereRadius->OnValueChanged.AddDynamic(this, &ADynamicShapeController::GenerateNewSphere);
+		Widget->BoxDimensionX->OnValueChanged.AddDynamic(this, &ADynamicShapeController::GenerateNewBox);
+		Widget->BoxDimensionY->OnValueChanged.AddDynamic(this, &ADynamicShapeController::GenerateNewBox);
+		Widget->BoxDimensionZ->OnValueChanged.AddDynamic(this, &ADynamicShapeController::GenerateNewBox);
 
 		SpawnedActor = GetWorld()->SpawnActor<ASelectionArea>(FVector::ZeroVector, FRotator::ZeroRotator);
 
@@ -79,11 +78,21 @@ void ADynamicShapeController::HandleShapeTypeChange(FString SelectedItem, ESelec
 void ADynamicShapeController::GenerateNewSphere(float NewRadius) {
 	float Radius = Widget->SphereRadius->GetValue();
 	SpawnedActor->GenerateSphere(0, Radius, FMath::FloorToInt(Radius / 10), FMath::FloorToInt(Radius / 5), Radius);
+
+	if (ShapeMaterial) {
+		auto ShapeMaterialInstance = UMaterialInstanceDynamic::Create(ShapeMaterial, nullptr);
+		SpawnedActor->ProceduralMeshComponent->SetMaterial(0, ShapeMaterialInstance);
+	}
 }
 
 void ADynamicShapeController::GenerateNewBox(float NewValue) {
 	FVector BoxDimensions{ Widget->BoxDimensionX->GetValue(), Widget->BoxDimensionY->GetValue(), Widget->BoxDimensionZ->GetValue() };
 	SpawnedActor->GenerateCube(0, BoxDimensions, BoxDimensions.Z / 2);
+
+	if (ShapeMaterial) {
+		auto ShapeMaterialInstance = UMaterialInstanceDynamic::Create(ShapeMaterial, nullptr);
+		SpawnedActor->ProceduralMeshComponent->SetMaterial(0, ShapeMaterialInstance);
+	}
 }
 
 void ADynamicShapeController::HandleActorLocationChange() {
