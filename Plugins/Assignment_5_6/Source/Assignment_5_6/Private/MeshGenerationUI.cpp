@@ -12,3 +12,19 @@ void UMeshGenerationUI::HideSphereRadius() {
 	BoxDimensions->SetVisibility(ESlateVisibility::Visible);
 	SphereRadius->SetVisibility(ESlateVisibility::Hidden);
 }
+
+void UMeshGenerationUI::ShowProgressBar() {
+	ProgressBar->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UMeshGenerationUI::HideProgressBar() {
+	ProgressBar->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UMeshGenerationUI::UpdateProgressBar(float InPercent) {
+	ProgressBar->SetPercent(InPercent);
+
+	if (InPercent == 1.0f) {
+		HideProgressBar();
+	}
+}

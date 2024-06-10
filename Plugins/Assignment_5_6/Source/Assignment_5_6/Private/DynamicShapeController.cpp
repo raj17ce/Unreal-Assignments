@@ -4,7 +4,7 @@
 #include "DynamicShapeController.h"
 
 
-ADynamicShapeController::ADynamicShapeController() : bIsActorMovable{true}, ShapeType{ EShapeType::Spherical }, Widget{ nullptr }, SpawnedActor{nullptr} {}
+ADynamicShapeController::ADynamicShapeController() : bIsActorMovable{true}, ShapeType{ EShapeType::Spherical }, Widget{ nullptr }, SelectionArea{nullptr}, MeshGenerator{nullptr} {}
 
 void ADynamicShapeController::BeginPlay() {
 	Super::BeginPlay();
@@ -18,15 +18,33 @@ void ADynamicShapeController::BeginPlay() {
 
 		Widget->BoxDimensions->SetVisibility(ESlateVisibility::Hidden);
 
+		CurrentShapeBounds = FVector{ Widget->SphereRadius->GetValue() };
+
+		if (SelectionAreaClass) {
+			SelectionArea = GetWorld()->SpawnActor<ASelectionArea>(SelectionAreaClass, FVector::ZeroVector, FRotator::ZeroRotator);
+		}
+		if (MeshGeneratorClass) {
+			MeshGenerator = NewObject<AMeshGenerator>(this, MeshGeneratorClass);
+			if (SelectionArea) {
+				MeshGenerator->InitParams(SelectionArea, FMath::FloorToInt(Widget->InstanceCount->GetValue()), ShapeType, CurrentShapeBounds);
+			}
+		}
+
+		Widget->HideProgressBar();
 		Widget->ShapeType->OnSelectionChanged.AddDynamic(this, &ADynamicShapeController::HandleShapeTypeChange);
 		Widget->SphereRadius->OnValueChanged.AddDynamic(this, &ADynamicShapeController::GenerateNewSphere);
 		Widget->BoxDimensionX->OnValueChanged.AddDynamic(this, &ADynamicShapeController::GenerateNewBox);
 		Widget->BoxDimensionY->OnValueChanged.AddDynamic(this, &ADynamicShapeController::GenerateNewBox);
 		Widget->BoxDimensionZ->OnValueChanged.AddDynamic(this, &ADynamicShapeController::GenerateNewBox);
+		Widget->InstanceCount->OnValueChanged.AddDynamic(this, &ADynamicShapeController::HandleInstanceCountChange);
 
-		SpawnedActor = GetWorld()->SpawnActor<ASelectionArea>(FVector::ZeroVector, FRotator::ZeroRotator);
+		if (MeshGenerator) {
+			Widget->GenerateMeshesButton->OnClicked.AddDynamic(this, &ADynamicShapeController::HandleMeshButtonClick);
+			
+			MeshGenerator->OnProgressed.BindUObject(this, &ADynamicShapeController::HandleProgressBar);
+		}
 
-		GenerateNewSphere(250.0f);
+		GenerateNewSphere(CurrentShapeBounds.X);
 	} 
 }
 
@@ -64,34 +82,42 @@ void ADynamicShapeController::HandleShapeTypeChange(FString SelectedItem, ESelec
 			ShapeType = EShapeType::Spherical;
 			Widget->HideBoxDimensions();
 
-			GenerateNewSphere(250.0f);
+			GenerateNewSphere(CurrentShapeBounds.X);
 		}
 		else if (ASelectionArea::GetShapeTypeFromString(SelectedItem) == EShapeType::Box) {
 			ShapeType = EShapeType::Box;
 			Widget->HideSphereRadius();
 
-			GenerateNewBox(500.0f);
+			GenerateNewBox(CurrentShapeBounds.X);
+		}
+
+		if (MeshGenerator) {
+			MeshGenerator->SetShapeType(ShapeType);
 		}
 	}
 }
 
 void ADynamicShapeController::GenerateNewSphere(float NewRadius) {
-	float Radius = Widget->SphereRadius->GetValue();
-	SpawnedActor->GenerateSphere(0, Radius, FMath::FloorToInt(Radius / 10), FMath::FloorToInt(Radius / 5), Radius);
+	CurrentShapeBounds = FVector{ NewRadius };
+	SelectionArea->GenerateSphere(0, NewRadius, 30, 50, NewRadius);
 
-	if (ShapeMaterial) {
-		auto ShapeMaterialInstance = UMaterialInstanceDynamic::Create(ShapeMaterial, nullptr);
-		SpawnedActor->ProceduralMeshComponent->SetMaterial(0, ShapeMaterialInstance);
+	if (MeshGenerator) {
+		MeshGenerator->SetDimensions(CurrentShapeBounds);
 	}
 }
 
 void ADynamicShapeController::GenerateNewBox(float NewValue) {
-	FVector BoxDimensions{ Widget->BoxDimensionX->GetValue(), Widget->BoxDimensionY->GetValue(), Widget->BoxDimensionZ->GetValue() };
-	SpawnedActor->GenerateCube(0, BoxDimensions, BoxDimensions.Z / 2);
+	CurrentShapeBounds = FVector{ Widget->BoxDimensionX->GetValue(), Widget->BoxDimensionY->GetValue(), Widget->BoxDimensionZ->GetValue() };
+	SelectionArea->GenerateCube(0, CurrentShapeBounds, CurrentShapeBounds.Z / 2);
 
-	if (ShapeMaterial) {
-		auto ShapeMaterialInstance = UMaterialInstanceDynamic::Create(ShapeMaterial, nullptr);
-		SpawnedActor->ProceduralMeshComponent->SetMaterial(0, ShapeMaterialInstance);
+	if (MeshGenerator) {
+		MeshGenerator->SetDimensions(CurrentShapeBounds);
+	}
+}
+
+void ADynamicShapeController::HandleInstanceCountChange(float NewInstanceCount) {
+	if (MeshGenerator) {
+		MeshGenerator->SetNumberOfInstances(FMath::FloorToInt(Widget->InstanceCount->GetValue()));
 	}
 }
 
@@ -106,14 +132,14 @@ void ADynamicShapeController::HandleActorLocationChange() {
 
 		FCollisionQueryParams CollisionQueryParams;
 		CollisionQueryParams.bTraceComplex = true;
-		CollisionQueryParams.AddIgnoredActor(SpawnedActor);
+		CollisionQueryParams.AddIgnoredActor(SelectionArea);
 
 		FHitResult HitResult;
 
 		if (GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECC_Visibility, CollisionQueryParams)) {
 			if (HitResult.bBlockingHit) {
 				HitResult.Location.Z = 0.0;
-				SpawnedActor->SetActorLocation(HitResult.Location);
+				SelectionArea->SetActorLocation(HitResult.Location);
 			}
 		}
 	}
@@ -126,4 +152,13 @@ void ADynamicShapeController::HandleLeftMouseClick() {
 	else {
 		bIsActorMovable = true;
 	}
+}
+
+void ADynamicShapeController::HandleMeshButtonClick() {
+	Widget->ShowProgressBar();
+	MeshGenerator->ScatterMeshes();
+}
+
+void ADynamicShapeController::HandleProgressBar(float ProgressInPercent) {
+	Widget->UpdateProgressBar(ProgressInPercent);
 }

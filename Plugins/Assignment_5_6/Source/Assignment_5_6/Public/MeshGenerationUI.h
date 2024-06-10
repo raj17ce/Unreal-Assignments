@@ -11,6 +11,7 @@
 #include "UMG/Public/Components/EditableTextBox.h"
 #include "UMG/Public/Components/Button.h"
 #include "UMG/Public/Components/TextBlock.h"
+#include "UMG/Public/Components/ProgressBar.h"
 #include "MeshGenerationUI.generated.h"
 
 /**
@@ -44,7 +45,7 @@ public:
 	USpinBox* BoxDimensionZ;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	UEditableTextBox* InstanceCount;
+	USpinBox* InstanceCount;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UButton* GenerateMeshesButton;
@@ -55,6 +56,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* NotificationText;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	UProgressBar* ProgressBar;
+
 	void HideBoxDimensions();
 	void HideSphereRadius();
+	void ShowProgressBar();
+	void HideProgressBar();
+
+	void UpdateProgressBar(float InPercent);
 };

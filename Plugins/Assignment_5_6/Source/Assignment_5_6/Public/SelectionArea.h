@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "../Plugins/Runtime/ProceduralMeshComponent/Source/ProceduralMeshComponent/Public/ProceduralMeshComponent.h"
+#include "ProceduralMeshComponent.h"
 #include "Components/SceneComponent.h"
 #include "SelectionArea.generated.h"
 
@@ -37,8 +37,8 @@ public:
 	UPROPERTY(VisibleDefaultsOnly)
 	UProceduralMeshComponent* ProceduralMeshComponent;
 
-	//UFUNCTION(BlueprintCallable)
-	//void ToggleShape(const FVector& Dimensions);
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, category = "Material")
+	UMaterialInterface* ShapeMaterial;
 
 	UFUNCTION(BlueprintCallable)
 	void GenerateCube(int32 Section, const FVector& CubeDimensions, float ZOffset);

@@ -30,28 +30,6 @@ void ASelectionArea::Tick(float DeltaTime)
 
 }
 
-//void ASelectionArea::CreateSelectionAreaActor(const FVector& Dimensions) {
-//	
-//
-//	if (ShapeType == EShapeType::Box) {
-//		GenerateCube(0, Dimensions, Dimensions.Z/2);
-//	}
-//	else if (ShapeType == EShapeType::Spherical) {
-//		GenerateSphere(0, Dimensions.X, FMath::FloorToInt(Dimensions.X / 10), FMath::FloorToInt(Dimensions.X / 5), Dimensions.Z);
-//	}
-//}
-//
-//void ASelectionArea::ToggleShape(const FVector& Dimensions) {
-//	if (ShapeType == EShapeType::Box) {
-//		ShapeType = EShapeType::Spherical;
-//	}
-//	else if (ShapeType == EShapeType::Spherical) {
-//		ShapeType = EShapeType::Box;
-//	}
-//
-//	CreateSelectionAreaActor(Dimensions);
-//}
-
 void ASelectionArea::GenerateCube(int32 Section, const FVector& CubeDimensions, float ZOffset) {
 	ProceduralMeshComponent->ClearAllMeshSections();
 
@@ -125,6 +103,10 @@ void ASelectionArea::GenerateCube(int32 Section, const FVector& CubeDimensions, 
 	}
 
 	ProceduralMeshComponent->CreateMeshSection_LinearColor(Section, Vertices, Triangles, Normals, UVs, TArray<FLinearColor>{}, TArray<FProcMeshTangent>{}, true);
+	if (ShapeMaterial) {
+		auto ShapeMaterialInstance = UMaterialInstanceDynamic::Create(ShapeMaterial, nullptr);
+		ProceduralMeshComponent->SetMaterial(Section, ShapeMaterialInstance);
+	}
 }
 
 void ASelectionArea::GenerateSphere(int32 Section, float Radius, int32 RingCount, int32 PointsCount, float ZOffset) {
@@ -179,6 +161,10 @@ void ASelectionArea::GenerateSphere(int32 Section, float Radius, int32 RingCount
 	}
 
 	ProceduralMeshComponent->CreateMeshSection_LinearColor(Section, Vertices, Triangles, Normals, UVs, TArray<FLinearColor>{}, TArray<FProcMeshTangent>{}, true);
+	if (ShapeMaterial) {
+		auto ShapeMaterialInstance = UMaterialInstanceDynamic::Create(ShapeMaterial, nullptr);
+		ProceduralMeshComponent->SetMaterial(Section, ShapeMaterialInstance);
+	}
 }
 
 void ASelectionArea::AddTriangle(TArray<int32>& Triangles, int32 Index1, int32 Index2, int32 Index3) {

@@ -30,6 +30,9 @@ struct FStaticMeshData {
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MaxDistance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UMaterialInstance* Material;
 };
 
 /**
@@ -42,10 +45,4 @@ class ASSIGNMENT_5_6_API UMeshDataAsset : public UDataAsset
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MeshData")
 	TArray<FStaticMeshData> MeshesData;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Materials")
-	TArray<UMaterial*> Materials;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Colours")
-	TArray<FLinearColor> Colours;
 };

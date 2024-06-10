@@ -10,6 +10,7 @@
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "MeshGenerator.h"
 #include "DynamicShapeController.generated.h"
 
 /**
@@ -38,11 +39,20 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, category="Widget")
 	UMeshGenerationUI* Widget;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
-	ASelectionArea* SpawnedActor;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, category = "Shape")
-	UMaterial* ShapeMaterial;
+	TSubclassOf<ASelectionArea> SelectionAreaClass;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, category = "Shape")
+	ASelectionArea* SelectionArea;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, category = "Shape")
+	FVector CurrentShapeBounds;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, category = "Mesh Generator")
+	TSubclassOf<AMeshGenerator> MeshGeneratorClass;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, category = "Mesh Generator")
+	AMeshGenerator* MeshGenerator;
 
 	FInputModeGameAndUI InputMode{};
 
@@ -55,7 +65,16 @@ public:
 	UFUNCTION()
 	void GenerateNewBox(float NewValue);
 
+	UFUNCTION()
+	void HandleInstanceCountChange(float NewInstanceCount);
+
 	void HandleActorLocationChange();
 
 	void HandleLeftMouseClick();
+
+	UFUNCTION()
+	void HandleMeshButtonClick();
+	
+	UFUNCTION()
+	void HandleProgressBar(float ProgressInPercent);
 };
