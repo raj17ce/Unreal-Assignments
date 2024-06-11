@@ -10,14 +10,18 @@ void FAsyncScatterTask::DoWork() {
 		if (auto DataAsset = MeshGenerator->DataAsset) {
 			TArray<FStaticMeshData> StaticMeshesData = DataAsset->MeshesData;
 
-			for (int i = 0; i < MeshGenerator->GetNumberOfInstances(); ++i) {
-				FVector Origin{ MeshGenerator->GetSelectionArea()->GetActorLocation() };
+			for (int i = 0; MeshGenerator.IsValid() && i < MeshGenerator->GetNumberOfInstances(); ++i) {
+				
+				FVector Origin{0.0};
+				if (MeshGenerator.IsValid() && MeshGenerator->GetSelectionArea()->IsValidLowLevel()) {
+					Origin = FVector{ MeshGenerator->GetSelectionArea()->GetActorLocation() };
+				}
 				FVector Position{0.0};
 
-				if (MeshGenerator->GetShapeType() == EShapeType::Spherical) {
+				if (MeshGenerator.IsValid() && MeshGenerator->GetShapeType() == EShapeType::Spherical) {
 					Position = FindRandomPointInSphere(Origin, MeshGenerator->GetDimensions());
 				}
-				else {
+				else if(MeshGenerator.IsValid()) {
 					Position = FindRandomPointInBox(Origin, MeshGenerator->GetDimensions());
 				}
 
@@ -31,10 +35,11 @@ void FAsyncScatterTask::DoWork() {
 
 				FTransform MeshTransform{ FRotator{ RotationPitch, RotationYaw, RotationRoll }, Position, FVector{Scale} };
 
-				AsyncTask(ENamedThreads::GameThread, [this, MeshData, MeshTransform]() {
-					MeshGenerator->AddMeshInstance(MeshData, MeshTransform);
-				});
-
+				if (MeshGenerator.IsValid()) {
+					AsyncTask(ENamedThreads::GameThread, [this, MeshData, MeshTransform]() {
+						MeshGenerator->AddMeshInstance(MeshData, MeshTransform);
+					});
+				}	
 				FPlatformProcess::Sleep(0.001f);
 			}
 		}

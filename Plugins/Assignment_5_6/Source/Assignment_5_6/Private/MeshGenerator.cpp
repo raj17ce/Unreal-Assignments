@@ -71,6 +71,8 @@ void AMeshGenerator::ScatterMeshes() {
 }
 
 void AMeshGenerator::AddMeshInstance(const FStaticMeshData& MeshData, const FTransform& Transform) {
+	
+	if(!this && !IsValid(this)) return;
 
 	auto** HISMCPtr = HISMComponents.Find(MeshData.StaticMesh);
 	UHierarchicalInstancedStaticMeshComponent* NewHISMC;

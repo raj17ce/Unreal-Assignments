@@ -59,10 +59,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UProgressBar* ProgressBar;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	UTextBlock* ProgressBarText;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	UTextBlock* ProgressBarPercent;
+
 	void HideBoxDimensions();
 	void HideSphereRadius();
 	void ShowProgressBar();
 	void HideProgressBar();
+	void EnableMeshButton();
+	void DisableMeshButton();
 
 	void UpdateProgressBar(float InPercent);
 };

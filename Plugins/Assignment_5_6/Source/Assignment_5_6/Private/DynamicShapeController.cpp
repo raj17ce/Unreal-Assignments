@@ -156,6 +156,7 @@ void ADynamicShapeController::HandleLeftMouseClick() {
 
 void ADynamicShapeController::HandleMeshButtonClick() {
 	Widget->ShowProgressBar();
+	Widget->DisableMeshButton();
 	MeshGenerator->ScatterMeshes();
 }
 
